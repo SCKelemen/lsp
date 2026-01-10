@@ -387,8 +387,8 @@ code
 			content: `#region MyRegion
 code here
 #endregion`,
-			startMarker:  "region",
-			endMarker:    "endregion",
+			startMarker:  "#region",
+			endMarker:    "#endregion",
 			wantCount:    1,
 			wantAllKinds: "region",
 		},
