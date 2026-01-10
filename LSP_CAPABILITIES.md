@@ -86,14 +86,14 @@ This document shows all Language Server Protocol capabilities and their support 
 
 | Capability | Status | Usage | Core Type | Provider Interface | Notes |
 |------------|--------|-------|-----------|-------------------|-------|
-| `textDocument/references` | ✅ | Both | `Location` | `DefinitionProvider` | Find all references |
+| `textDocument/references` | ✅ | Both | `Location`, `ReferenceContext` | `ReferencesProvider` | Find all references |
 
 ### Document Symbols
 
 | Capability | Status | Usage | Core Type | Provider Interface | Notes |
 |------------|--------|-------|-----------|-------------------|-------|
 | `textDocument/documentSymbol` | ✅ | Both | `DocumentSymbol` | `DocumentSymbolProvider` | Symbol tree/outline |
-| `textDocument/documentHighlight` | 📋 | Both | - | - | Symbol highlighting |
+| `textDocument/documentHighlight` | ✅ | Both | `DocumentHighlight`, `DocumentHighlightKind` | `DocumentHighlightProvider` | Symbol highlighting |
 
 ### Code Actions
 
@@ -113,8 +113,8 @@ This document shows all Language Server Protocol capabilities and their support 
 
 | Capability | Status | Usage | Core Type | Provider Interface | Notes |
 |------------|--------|-------|-----------|-------------------|-------|
-| `textDocument/documentLink` | 📋 | Both | - | - | Clickable links in document |
-| `documentLink/resolve` | 📋 | Both | - | - | Resolve link target |
+| `textDocument/documentLink` | ✅ | Both | `DocumentLink` | `DocumentLinkProvider` | Clickable links in document |
+| `documentLink/resolve` | ✅ | Both | `DocumentLink` | `DocumentLinkResolveProvider` | Resolve link target |
 
 ### Color
 
@@ -190,8 +190,8 @@ This document shows all Language Server Protocol capabilities and their support 
 
 | Capability | Status | Usage | Core Type | Provider Interface | Notes |
 |------------|--------|-------|-----------|-------------------|-------|
-| `textDocument/inlayHint` | 📋 | Both | - | - | Inline hints (types, params) |
-| `inlayHint/resolve` | 📋 | Both | - | - | Resolve inlay hint details |
+| `textDocument/inlayHint` | ✅ | Both | `InlayHint`, `InlayHintKind` | `InlayHintsProvider` | Inline hints (types, params) |
+| `inlayHint/resolve` | 🔧 | LSP | `InlayHint` | - | Resolve inlay hint details |
 
 ### Inline Value
 
@@ -205,7 +205,7 @@ This document shows all Language Server Protocol capabilities and their support 
 
 | Capability | Status | Usage | Core Type | Provider Interface | Notes |
 |------------|--------|-------|-----------|-------------------|-------|
-| `workspace/symbol` | 📋 | Both | - | - | Workspace-wide symbol search |
+| `workspace/symbol` | ✅ | Both | `WorkspaceSymbol` | `WorkspaceSymbolProvider` | Workspace-wide symbol search |
 | `workspace/executeCommand` | 🔧 | LSP | `Command` | - | Execute custom command |
 | `workspace/applyEdit` | ✅ | Both | `WorkspaceEdit` | - | Apply workspace edit |
 | `workspace/willCreateFiles` | ✅ | Both | `CreateFile` | - | Pre-create notification |
@@ -235,13 +235,13 @@ This document shows all Language Server Protocol capabilities and their support 
 ## Summary Statistics
 
 ### Implementation Status
-- ✅ **Fully Supported with Core Types**: 28 capabilities
+- ✅ **Fully Supported with Core Types**: 33 capabilities
 - 🔧 **Protocol Types Only**: 15 capabilities
-- 📋 **Planned**: 17 capabilities
+- 📋 **Planned**: 12 capabilities
 - ❌ **Not Implemented**: 0 capabilities
 
 ### Usage Breakdown
-- **CLI + LSP (Both)**: 28 capabilities
+- **CLI + LSP (Both)**: 33 capabilities
 - **LSP Only**: 15 capabilities
 - **CLI Only**: 0 capabilities
 
@@ -254,6 +254,7 @@ This document shows all Language Server Protocol capabilities and their support 
 - ✅ `TextEdit` (UTF-8 offsets)
 - ✅ `WorkspaceEdit` (create/rename/delete files)
 - ✅ `DocumentSymbol` (hierarchical with UTF-8 offsets)
+- ✅ `DocumentHighlight` (text, read, write kinds)
 - ✅ `CodeAction` (quick fixes, refactorings)
 - ✅ `FoldingRange` (comment, imports, region)
 - ✅ `CompletionItem` (full LSP completion support)
@@ -263,12 +264,17 @@ This document shows all Language Server Protocol capabilities and their support 
 - ✅ `HoverInfo` (hover documentation)
 - ✅ `CodeLens` (inline commands)
 - ✅ `Command` (executable commands)
+- ✅ `InlayHint` (parameter names, inferred types)
+- ✅ `DocumentLink` (clickable URIs in documents)
+- ✅ `WorkspaceSymbol` (workspace-wide symbol search)
+- ✅ `ReferenceContext` (reference search options)
 
 ### Provider Interfaces Available
 - ✅ `DiagnosticProvider`
 - ✅ `CodeFixProvider`
 - ✅ `FoldingRangeProvider`
 - ✅ `DocumentSymbolProvider`
+- ✅ `DocumentHighlightProvider`
 - ✅ `DefinitionProvider`
 - ✅ `HoverProvider`
 - ✅ `FormattingProvider`
@@ -280,6 +286,11 @@ This document shows all Language Server Protocol capabilities and their support 
 - ✅ `PrepareRenameProvider`
 - ✅ `CodeLensProvider`
 - ✅ `CodeLensResolveProvider`
+- ✅ `InlayHintsProvider`
+- ✅ `ReferencesProvider`
+- ✅ `DocumentLinkProvider`
+- ✅ `DocumentLinkResolveProvider`
+- ✅ `WorkspaceSymbolProvider`
 
 ---
 
@@ -315,14 +326,13 @@ This document shows all Language Server Protocol capabilities and their support 
 ### 📋 Planned Features
 
 The following features are planned for future releases:
-- Document links
 - Color decorators
 - Selection range expansion
 - Call hierarchy
 - Type hierarchy
 - Semantic tokens
-- Inlay hints
-- Workspace symbols
+- On-type formatting
+- Linked editing range
 
 These will follow the same pattern: core types with UTF-8 offsets, provider interfaces, and adapters for protocol conversion.
 

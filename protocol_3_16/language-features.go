@@ -1310,6 +1310,189 @@ const (
 	DocumentHighlightKindWrite = DocumentHighlightKind(3)
 )
 
+// https://microsoft.github.io/language-server-protocol/specifications/specification-3-17#textDocument_inlayHint
+
+type InlayHintClientCapabilities struct {
+	/**
+	 * Whether inlay hints support dynamic registration.
+	 */
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+
+	/**
+	 * Indicates which properties a client can resolve lazily on an inlay hint.
+	 */
+	ResolveSupport *struct {
+		/**
+		 * The properties that a client can resolve lazily.
+		 */
+		Properties []string `json:"properties"`
+	} `json:"resolveSupport,omitempty"`
+}
+
+type InlayHintOptions struct {
+	WorkDoneProgressOptions
+
+	/**
+	 * The server provides support to resolve additional
+	 * information for an inlay hint item.
+	 */
+	ResolveProvider *bool `json:"resolveProvider,omitempty"`
+}
+
+type InlayHintRegistrationOptions struct {
+	InlayHintOptions
+	TextDocumentRegistrationOptions
+	StaticRegistrationOptions
+}
+
+const MethodTextDocumentInlayHint = Method("textDocument/inlayHint")
+
+type TextDocumentInlayHintFunc func(context *glsp.Context, params *InlayHintParams) ([]InlayHint, error)
+
+type InlayHintParams struct {
+	WorkDoneProgressParams
+
+	/**
+	 * The text document.
+	 */
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+
+	/**
+	 * The visible document range for which inlay hints should be computed.
+	 */
+	Range Range `json:"range"`
+}
+
+const MethodInlayHintResolve = Method("inlayHint/resolve")
+
+type InlayHintResolveFunc func(context *glsp.Context, params *InlayHint) (*InlayHint, error)
+
+/**
+ * Inlay hint kinds.
+ */
+type InlayHintKind Integer
+
+const (
+	/**
+	 * An inlay hint that for a type annotation.
+	 */
+	InlayHintKindType = InlayHintKind(1)
+
+	/**
+	 * An inlay hint that is for a parameter.
+	 */
+	InlayHintKindParameter = InlayHintKind(2)
+)
+
+/**
+ * An inlay hint label part allows for interactive and composite labels
+ * of inlay hints.
+ */
+type InlayHintLabelPart struct {
+	/**
+	 * The value of this label part.
+	 */
+	Value string `json:"value"`
+
+	/**
+	 * The tooltip text when you hover over this label part. Depending on
+	 * the client capability `inlayHint.resolveSupport` clients might resolve
+	 * this property late using the resolve request.
+	 */
+	Tooltip any `json:"tooltip,omitempty"`
+
+	/**
+	 * An optional source code location that represents this
+	 * label part.
+	 *
+	 * The editor will use this location for the hover and for code navigation
+	 * features: This part will become a clickable link that resolves to the
+	 * definition of the symbol at the given location (not necessarily the
+	 * location itself), it shows the hover that shows at the given location,
+	 * and it shows a context menu with further code navigation commands.
+	 *
+	 * Depending on the client capability `inlayHint.resolveSupport` clients
+	 * might resolve this property late using the resolve request.
+	 */
+	Location *Location `json:"location,omitempty"`
+
+	/**
+	 * An optional command for this label part.
+	 *
+	 * Depending on the client capability `inlayHint.resolveSupport` clients
+	 * might resolve this property late using the resolve request.
+	 */
+	Command *Command `json:"command,omitempty"`
+}
+
+/**
+ * Inlay hint information.
+ */
+type InlayHint struct {
+	/**
+	 * The position of this hint.
+	 */
+	Position Position `json:"position"`
+
+	/**
+	 * The label of this hint. A human readable string or an array of
+	 * InlayHintLabelPart label parts.
+	 *
+	 * *Note* that neither the string nor the label part can be empty.
+	 */
+	Label any `json:"label"`
+
+	/**
+	 * The kind of this hint. Can be omitted in which case the client
+	 * should fall back to a reasonable default.
+	 */
+	Kind *InlayHintKind `json:"kind,omitempty"`
+
+	/**
+	 * Optional text edits that are performed when accepting this inlay hint.
+	 *
+	 * *Note* that edits are expected to change the document so that the inlay
+	 * hint (or its nearest variant) is now part of the document and the inlay
+	 * hint itself is now obsolete.
+	 *
+	 * Depending on the client capability `inlayHint.resolveSupport` clients
+	 * might resolve this property late using the resolve request.
+	 */
+	TextEdits []TextEdit `json:"textEdits,omitempty"`
+
+	/**
+	 * The tooltip text when you hover over this item.
+	 *
+	 * Depending on the client capability `inlayHint.resolveSupport` clients
+	 * might resolve this property late using the resolve request.
+	 */
+	Tooltip any `json:"tooltip,omitempty"`
+
+	/**
+	 * Render padding before the hint.
+	 *
+	 * Note: Padding should use the editor's background color, not the
+	 * background color of the hint itself. That means padding can be used
+	 * to visually align/separate an inlay hint.
+	 */
+	PaddingLeft *bool `json:"paddingLeft,omitempty"`
+
+	/**
+	 * Render padding after the hint.
+	 *
+	 * Note: Padding should use the editor's background color, not the
+	 * background color of the hint itself. That means padding can be used
+	 * to visually align/separate an inlay hint.
+	 */
+	PaddingRight *bool `json:"paddingRight,omitempty"`
+
+	/**
+	 * A data entry field that is preserved on an inlay hint between
+	 * a `textDocument/inlayHint` and a `inlayHint/resolve` request.
+	 */
+	Data any `json:"data,omitempty"`
+}
+
 // https://microsoft.github.io/language-server-protocol/specifications/specification-3-16#textDocument_documentSymbol
 
 type DocumentSymbolClientCapabilities struct {

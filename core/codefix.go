@@ -195,3 +195,19 @@ type WorkspaceSymbolProvider interface {
 	// Returns nil or empty slice if no symbols match the query.
 	ProvideWorkspaceSymbols(query string) []WorkspaceSymbol
 }
+
+// InlayHintsProvider provides inlay hints for a document.
+// Inlay hints show inline annotations like parameter names or inferred types.
+type InlayHintsProvider interface {
+	// ProvideInlayHints returns inlay hints for the given range in the document.
+	// Returns nil or empty slice if no hints are available.
+	ProvideInlayHints(uri, content string, rng Range) []InlayHint
+}
+
+// ReferencesProvider provides references to a symbol.
+// This finds all locations where a symbol is used.
+type ReferencesProvider interface {
+	// FindReferences returns all references to the symbol at the given position.
+	// Returns nil or empty slice if no references are found.
+	FindReferences(uri, content string, position Position, context ReferenceContext) []Location
+}
