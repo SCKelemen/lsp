@@ -339,3 +339,51 @@ type WorkspaceSymbolParams struct {
 	// The query is used to filter symbols.
 	Query string
 }
+
+// ReferenceContext specifies additional information when finding references.
+type ReferenceContext struct {
+	// IncludeDeclaration indicates whether the declaration should be included in the results.
+	IncludeDeclaration bool
+}
+
+// InlayHintKind defines the kind of an inlay hint.
+type InlayHintKind int
+
+const (
+	// InlayHintKindType is a hint for a type annotation.
+	InlayHintKindType InlayHintKind = 1
+	// InlayHintKindParameter is a hint for a parameter name.
+	InlayHintKindParameter InlayHintKind = 2
+)
+
+// InlayHint represents an inline annotation that is shown in the editor.
+// Inlay hints appear inline with the code and provide additional information
+// such as parameter names or inferred types.
+type InlayHint struct {
+	// Position is the position where the hint should be shown.
+	// The hint appears directly before this position.
+	Position Position
+
+	// Label is the text to display in the hint.
+	// Can be a simple string or structured with parts.
+	Label string
+
+	// Kind is the kind of hint (type or parameter).
+	Kind *InlayHintKind
+
+	// TextEdits are optional text edits to apply when accepting the hint.
+	// This allows hints to be actionable.
+	TextEdits []TextEdit
+
+	// Tooltip provides additional information shown when hovering the hint.
+	Tooltip string
+
+	// PaddingLeft adds whitespace before the hint.
+	PaddingLeft bool
+
+	// PaddingRight adds whitespace after the hint.
+	PaddingRight bool
+
+	// Data is arbitrary data preserved between textDocument/inlayHint and inlayHint/resolve.
+	Data interface{}
+}
