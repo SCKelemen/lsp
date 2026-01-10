@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/SCKelemen/lsp/core"
+	"github.com/SCKelemen/unicode/uax29"
 )
 
 // SimpleRenameProvider provides basic rename functionality for simple identifiers.
@@ -15,44 +16,50 @@ import (
 type SimpleRenameProvider struct{}
 
 func (p *SimpleRenameProvider) PrepareRename(uri, content string, position core.Position) *core.Range {
-	// Find the word at the position
+	// Find the word at the position using Unicode word boundaries
 	offset := core.PositionToByteOffset(content, position)
 	if offset < 0 || offset >= len(content) {
 		return nil
 	}
 
-	// Check if we're on a word character
-	if !isWordChar(rune(content[offset])) {
+	// Get all word boundaries in the content
+	breaks := uax29.FindWordBreaks(content)
+	if len(breaks) < 2 {
 		return nil
 	}
 
-	// Find word boundaries
-	start := offset
-	end := offset
+	// Find which word boundary the offset falls into
+	for i := 0; i < len(breaks)-1; i++ {
+		start := breaks[i]
+		end := breaks[i+1]
 
-	// Expand left to word boundary
-	for start > 0 && isWordChar(rune(content[start-1])) {
-		start--
+		if offset >= start && offset < end {
+			// Check if this segment is actually a word (not whitespace or punctuation)
+			word := content[start:end]
+			if len(strings.TrimSpace(word)) == 0 {
+				return nil // Just whitespace
+			}
+
+			// Check if it contains at least one alphanumeric character
+			hasAlphaNum := false
+			for _, r := range word {
+				if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '_' || r > 127 {
+					hasAlphaNum = true
+					break
+				}
+			}
+			if !hasAlphaNum {
+				return nil // Just punctuation
+			}
+
+			return &core.Range{
+				Start: core.ByteOffsetToPosition(content, start),
+				End:   core.ByteOffsetToPosition(content, end),
+			}
+		}
 	}
 
-	// Expand right to word boundary
-	for end < len(content) && isWordChar(rune(content[end])) {
-		end++
-	}
-
-	// Must have a non-empty word
-	if start == end {
-		return nil
-	}
-
-	// Convert to positions
-	startPos := core.ByteOffsetToPosition(content, start)
-	endPos := core.ByteOffsetToPosition(content, end)
-
-	return &core.Range{
-		Start: startPos,
-		End:   endPos,
-	}
+	return nil
 }
 
 func (p *SimpleRenameProvider) ProvideRename(ctx core.RenameContext) *core.WorkspaceEdit {
@@ -231,36 +238,50 @@ type MultiFileRenameProvider struct {
 }
 
 func (p *MultiFileRenameProvider) PrepareRename(uri, content string, position core.Position) *core.Range {
-	// Use simple word boundary detection
+	// Use Unicode word boundary detection
 	offset := core.PositionToByteOffset(content, position)
 	if offset < 0 || offset >= len(content) {
 		return nil
 	}
 
-	// Check if we're on a word character
-	if !isWordChar(rune(content[offset])) {
+	// Get all word boundaries in the content
+	breaks := uax29.FindWordBreaks(content)
+	if len(breaks) < 2 {
 		return nil
 	}
 
-	start := offset
-	end := offset
+	// Find which word boundary the offset falls into
+	for i := 0; i < len(breaks)-1; i++ {
+		start := breaks[i]
+		end := breaks[i+1]
 
-	for start > 0 && isWordChar(rune(content[start-1])) {
-		start--
+		if offset >= start && offset < end {
+			// Check if this segment is actually a word
+			word := content[start:end]
+			if len(strings.TrimSpace(word)) == 0 {
+				return nil
+			}
+
+			// Check if it contains at least one alphanumeric character
+			hasAlphaNum := false
+			for _, r := range word {
+				if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '_' || r > 127 {
+					hasAlphaNum = true
+					break
+				}
+			}
+			if !hasAlphaNum {
+				return nil
+			}
+
+			return &core.Range{
+				Start: core.ByteOffsetToPosition(content, start),
+				End:   core.ByteOffsetToPosition(content, end),
+			}
+		}
 	}
 
-	for end < len(content) && isWordChar(rune(content[end])) {
-		end++
-	}
-
-	if start == end {
-		return nil
-	}
-
-	return &core.Range{
-		Start: core.ByteOffsetToPosition(content, start),
-		End:   core.ByteOffsetToPosition(content, end),
-	}
+	return nil
 }
 
 func (p *MultiFileRenameProvider) ProvideRename(ctx core.RenameContext) *core.WorkspaceEdit {

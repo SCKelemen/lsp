@@ -1,3 +1,5 @@
+github.com/SCKelemen/unicode v1.0.0 h1:p7AITeN2Qe6JH1RjTc0qIpHWO2R5G/J7dqU5qOHf2aI=
+github.com/SCKelemen/unicode v1.0.0/go.mod h1:lJ+vty4r9+3E9Agh2Nmmlfl3/AJKCyP3gWMx8BSdOl0=
 github.com/aymanbagabas/go-osc52/v2 v2.0.1 h1:HwpRHbFMcZLEVr42D4p7XBqjyuxQH5SMiErDT4WkJ2k=
 github.com/aymanbagabas/go-osc52/v2 v2.0.1/go.mod h1:uYgXzlJ7ZpABp8OJ+exZzJJhRNQ2ASbcXHWsFqH8hp8=
 github.com/gorilla/websocket v1.4.1/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=

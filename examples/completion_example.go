@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/SCKelemen/lsp/core"
+	"github.com/SCKelemen/unicode/uax29"
 )
 
 // KeywordCompletionProvider provides keyword completions for a language.
@@ -34,22 +35,32 @@ func NewGoKeywordCompletionProvider() *KeywordCompletionProvider {
 }
 
 func (p *KeywordCompletionProvider) ProvideCompletions(ctx core.CompletionContext) *core.CompletionList {
-	// Get the word being typed
+	// Get the word being typed using Unicode word boundaries
 	offset := core.PositionToByteOffset(ctx.Content, ctx.Position)
 	if offset < 0 {
 		return nil
 	}
 
-	// Find the start of the current word
-	start := offset
-	for start > 0 && isWordChar(rune(ctx.Content[start-1])) {
-		start--
+	// Get all word boundaries
+	breaks := uax29.FindWordBreaks(ctx.Content)
+
+	// Find which word we're in
+	prefix := ""
+	if len(breaks) > 0 {
+		for i := 0; i < len(breaks)-1; i++ {
+			start := breaks[i]
+			end := breaks[i+1]
+
+			// Check if cursor is within or at the end of this word
+			if offset >= start && offset <= end {
+				prefix = ctx.Content[start:offset]
+				break
+			}
+		}
 	}
 
-	prefix := ""
-	if start < offset {
-		prefix = ctx.Content[start:offset]
-	}
+	// Treat whitespace-only prefix as empty (show all completions)
+	prefix = strings.TrimSpace(prefix)
 
 	// Filter keywords by prefix
 	var items []core.CompletionItem
@@ -126,22 +137,32 @@ func NewGoSnippetProvider() *SnippetCompletionProvider {
 }
 
 func (p *SnippetCompletionProvider) ProvideCompletions(ctx core.CompletionContext) *core.CompletionList {
-	// Get the word being typed
+	// Get the word being typed using Unicode word boundaries
 	offset := core.PositionToByteOffset(ctx.Content, ctx.Position)
 	if offset < 0 {
 		return nil
 	}
 
-	// Find the start of the current word
-	start := offset
-	for start > 0 && isWordChar(rune(ctx.Content[start-1])) {
-		start--
+	// Get all word boundaries
+	breaks := uax29.FindWordBreaks(ctx.Content)
+
+	// Find which word we're in
+	prefix := ""
+	if len(breaks) > 0 {
+		for i := 0; i < len(breaks)-1; i++ {
+			start := breaks[i]
+			end := breaks[i+1]
+
+			// Check if cursor is within or at the end of this word
+			if offset >= start && offset <= end {
+				prefix = ctx.Content[start:offset]
+				break
+			}
+		}
 	}
 
-	prefix := ""
-	if start < offset {
-		prefix = ctx.Content[start:offset]
-	}
+	// Treat whitespace-only prefix as empty (show all completions)
+	prefix = strings.TrimSpace(prefix)
 
 	// Filter snippets by prefix
 	var items []core.CompletionItem
@@ -187,22 +208,32 @@ func (p *SymbolCompletionProvider) ProvideCompletions(ctx core.CompletionContext
 		return nil
 	}
 
-	// Get the word being typed
+	// Get the word being typed using Unicode word boundaries
 	offset := core.PositionToByteOffset(ctx.Content, ctx.Position)
 	if offset < 0 {
 		return nil
 	}
 
-	// Find the start of the current word
-	start := offset
-	for start > 0 && isWordChar(rune(ctx.Content[start-1])) {
-		start--
+	// Get all word boundaries
+	breaks := uax29.FindWordBreaks(ctx.Content)
+
+	// Find which word we're in
+	prefix := ""
+	if len(breaks) > 0 {
+		for i := 0; i < len(breaks)-1; i++ {
+			start := breaks[i]
+			end := breaks[i+1]
+
+			// Check if cursor is within or at the end of this word
+			if offset >= start && offset <= end {
+				prefix = strings.ToLower(ctx.Content[start:offset])
+				break
+			}
+		}
 	}
 
-	prefix := ""
-	if start < offset {
-		prefix = strings.ToLower(ctx.Content[start:offset])
-	}
+	// Treat whitespace-only prefix as empty (show all completions)
+	prefix = strings.TrimSpace(prefix)
 
 	// Collect all identifiers in scope
 	symbols := make(map[string]core.CompletionItemKind)
