@@ -291,3 +291,51 @@ type Command struct {
 	// Arguments are optional arguments for the command.
 	Arguments []interface{}
 }
+
+// DocumentLink represents a link inside a document.
+// The link can point to a URL, a file, or another location in the workspace.
+// Uses UTF-8 byte offsets for the range.
+type DocumentLink struct {
+	// Range is the range where the link appears in the document.
+	Range Range
+
+	// Target is the URI that the link points to.
+	// If nil, the link should be resolved lazily via DocumentLinkResolveProvider.
+	Target *string
+
+	// Tooltip is the tooltip text when hovering over this link.
+	Tooltip *string
+
+	// Data is arbitrary data preserved between textDocument/documentLink and documentLink/resolve.
+	Data interface{}
+}
+
+// WorkspaceSymbol represents information about a symbol across the entire workspace.
+// Unlike DocumentSymbol which is for a single document, this can represent symbols
+// in any file in the workspace.
+type WorkspaceSymbol struct {
+	// Name is the name of this symbol.
+	Name string
+
+	// Kind is the kind of this symbol.
+	Kind SymbolKind
+
+	// Tags are tags for this symbol.
+	Tags []SymbolTag
+
+	// ContainerName is an optional container name (e.g., the class name for a method).
+	ContainerName string
+
+	// Location is where this symbol is defined.
+	Location Location
+
+	// Data is arbitrary data preserved between workspace/symbol and workspaceSymbol/resolve.
+	Data interface{}
+}
+
+// WorkspaceSymbolParams are parameters for a workspace symbol request.
+type WorkspaceSymbolParams struct {
+	// Query is a non-empty query string to search for.
+	// The query is used to filter symbols.
+	Query string
+}

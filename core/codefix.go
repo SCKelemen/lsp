@@ -170,3 +170,28 @@ type RangeFormattingProvider interface {
 	// ProvideRangeFormatting returns edits to format a range in the document.
 	ProvideRangeFormatting(uri, content string, r Range, options FormattingOptions) []TextEdit
 }
+
+// DocumentLinkProvider provides document links.
+// Document links are clickable regions in a document that link to URIs, files, or locations.
+type DocumentLinkProvider interface {
+	// ProvideDocumentLinks returns document links for the given document.
+	// Returns nil or empty slice if no links are available.
+	ProvideDocumentLinks(uri, content string) []DocumentLink
+}
+
+// DocumentLinkResolveProvider resolves additional details for a document link.
+// This is used for lazy resolution of link targets.
+type DocumentLinkResolveProvider interface {
+	// ResolveDocumentLink resolves additional details for a document link.
+	// This is called when the user hovers over a link but before following it.
+	ResolveDocumentLink(link DocumentLink) DocumentLink
+}
+
+// WorkspaceSymbolProvider provides workspace-wide symbol search.
+// Unlike DocumentSymbolProvider which returns symbols for a single document,
+// this searches across the entire workspace.
+type WorkspaceSymbolProvider interface {
+	// ProvideWorkspaceSymbols returns symbols matching the query across the workspace.
+	// Returns nil or empty slice if no symbols match the query.
+	ProvideWorkspaceSymbols(query string) []WorkspaceSymbol
+}
