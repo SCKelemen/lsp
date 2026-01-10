@@ -95,18 +95,58 @@ func (s *Server) TextDocumentDidOpen(
 }
 ```
 
-## 📚 Writing Validators
+## 📚 Comprehensive Feature Guides
 
-**New to writing validators?** Check out the comprehensive guide:
+Complete guides for implementing LSP features from scratch to production:
 
-➡️ **[VALIDATORS.md](VALIDATORS.md)** - Complete guide from first validator to LSP server integration
+### Core Features
 
-**Covers:**
-- Writing your first validator (step-by-step)
-- Testing validators with Unicode content
-- Composing multiple validators with registries
-- Providing code fixes for diagnostics
-- Full LSP server integration pattern
+➡️ **[VALIDATORS.md](VALIDATORS.md)** - Diagnostic Providers
+- Writing validators that detect code issues
+- Testing with Unicode content
+- Composing multiple validators
+- Integration with LSP servers
+
+➡️ **[CODE_ACTIONS.md](CODE_ACTIONS.md)** - Code Action Providers
+- Quick fixes for diagnostics
+- Refactoring actions (extract, inline, rewrite)
+- Source actions (organize imports, fix all)
+- Workspace edits and multiple file changes
+
+### Navigation & Information
+
+➡️ **[NAVIGATION.md](NAVIGATION.md)** - Definition & Hover Providers
+- Go-to-definition across files
+- Hover information with markdown
+- Finding references and implementations
+- Type definitions and declarations
+
+➡️ **[SYMBOLS.md](SYMBOLS.md)** - Document Symbol Providers
+- Hierarchical document structure
+- Outline and breadcrumb navigation
+- Symbol kinds (functions, classes, variables)
+- Tree-based symbol representation
+
+### Editor Features
+
+➡️ **[FOLDING.md](FOLDING.md)** - Folding Range Providers
+- Collapsible code regions
+- Multiple folding strategies (braces, indentation, regions)
+- Comments, imports, and function folding
+- Language-agnostic folding patterns
+
+➡️ **[FORMATTING.md](FORMATTING.md)** - Formatting Providers
+- Document-wide formatting
+- Range formatting for selections
+- Formatting options (tabs, spaces, whitespace)
+- Integration with language formatters
+
+**Each guide includes:**
+- ✅ Step-by-step implementation
+- ✅ Complete working examples
+- ✅ Comprehensive test patterns
+- ✅ LSP server integration
+- ✅ UTF-8/UTF-16 conversion details
 
 ## Architecture
 
@@ -181,7 +221,7 @@ type FoldingRangeProvider interface {
 // ... and more (hover, definition, formatting, etc.)
 ```
 
-**→ See [VALIDATORS.md](VALIDATORS.md) for complete guide to implementing validators**
+**→ See comprehensive feature guides above for complete implementation details**
 
 ## Traditional LSP Server (Original Functionality)
 
@@ -247,8 +287,16 @@ func setTrace(context *glsp.Context, params *protocol.SetTraceParams) error {
 
 ## Documentation
 
-- **[VALIDATORS.md](VALIDATORS.md)** - Complete guide to writing validators from scratch to LSP server integration
-- **[CORE_TYPES.md](CORE_TYPES.md)** - Comprehensive guide to core types architecture
+### Feature Implementation Guides
+- **[VALIDATORS.md](VALIDATORS.md)** - Diagnostic providers and validators
+- **[CODE_ACTIONS.md](CODE_ACTIONS.md)** - Quick fixes, refactorings, and source actions
+- **[NAVIGATION.md](NAVIGATION.md)** - Go-to-definition and hover information
+- **[SYMBOLS.md](SYMBOLS.md)** - Document symbols and outline
+- **[FOLDING.md](FOLDING.md)** - Folding ranges for code regions
+- **[FORMATTING.md](FORMATTING.md)** - Document and range formatting
+
+### Architecture & Reference
+- **[CORE_TYPES.md](CORE_TYPES.md)** - Core types architecture and UTF-8/UTF-16 conversion
 - **[LSP_CAPABILITIES.md](LSP_CAPABILITIES.md)** - All LSP capabilities with support status
 - **[examples/](examples/)** - Complete working examples with tests
 - **[core/](core/)** - Core type definitions and utilities
