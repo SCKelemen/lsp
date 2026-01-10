@@ -95,6 +95,19 @@ func (s *Server) TextDocumentDidOpen(
 }
 ```
 
+## 📚 Writing Validators
+
+**New to writing validators?** Check out the comprehensive guide:
+
+➡️ **[VALIDATORS.md](VALIDATORS.md)** - Complete guide from first validator to LSP server integration
+
+**Covers:**
+- Writing your first validator (step-by-step)
+- Testing validators with Unicode content
+- Composing multiple validators with registries
+- Providing code fixes for diagnostics
+- Full LSP server integration pattern
+
 ## Architecture
 
 ```
@@ -168,6 +181,8 @@ type FoldingRangeProvider interface {
 // ... and more (hover, definition, formatting, etc.)
 ```
 
+**→ See [VALIDATORS.md](VALIDATORS.md) for complete guide to implementing validators**
+
 ## Traditional LSP Server (Original Functionality)
 
 This library still supports traditional LSP server usage:
@@ -232,8 +247,10 @@ func setTrace(context *glsp.Context, params *protocol.SetTraceParams) error {
 
 ## Documentation
 
+- **[VALIDATORS.md](VALIDATORS.md)** - Complete guide to writing validators from scratch to LSP server integration
 - **[CORE_TYPES.md](CORE_TYPES.md)** - Comprehensive guide to core types architecture
-- **[examples/](examples/)** - Complete working examples
+- **[LSP_CAPABILITIES.md](LSP_CAPABILITIES.md)** - All LSP capabilities with support status
+- **[examples/](examples/)** - Complete working examples with tests
 - **[core/](core/)** - Core type definitions and utilities
 
 ## Testing
