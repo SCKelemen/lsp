@@ -149,3 +149,22 @@ func ProtocolToCoreDiagnostic(diag protocol.Diagnostic, content string) core.Dia
 
 	return result
 }
+
+// CoreToProtocolDiagnostics converts a slice of core diagnostics to protocol diagnostics.
+// This is a convenience function for the common case of converting diagnostic arrays.
+func CoreToProtocolDiagnostics(diags []core.Diagnostic, content string) []protocol.Diagnostic {
+	result := make([]protocol.Diagnostic, len(diags))
+	for i, diag := range diags {
+		result[i] = CoreToProtocolDiagnostic(diag, content)
+	}
+	return result
+}
+
+// ProtocolToCoreDiagnostics converts a slice of protocol diagnostics to core diagnostics.
+func ProtocolToCoreDiagnostics(diags []protocol.Diagnostic, content string) []core.Diagnostic {
+	result := make([]core.Diagnostic, len(diags))
+	for i, diag := range diags {
+		result[i] = ProtocolToCoreDiagnostic(diag, content)
+	}
+	return result
+}
