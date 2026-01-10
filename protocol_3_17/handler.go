@@ -5,8 +5,8 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/tliron/glsp"
-	protocol316 "github.com/tliron/glsp/protocol_3_16"
+	"github.com/SCKelemen/lsp"
+	protocol316 "github.com/SCKelemen/lsp/protocol_3_16"
 )
 
 type Handler struct {

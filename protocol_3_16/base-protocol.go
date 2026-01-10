@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"strconv"
 
-	"github.com/tliron/glsp"
+	"github.com/SCKelemen/lsp"
 )
 
 var True bool = true

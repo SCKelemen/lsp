@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/tliron/commonlog"
-	"github.com/tliron/glsp"
+	"github.com/SCKelemen/lsp"
 )
 
 var DefaultTimeout = time.Minute

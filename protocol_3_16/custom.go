@@ -3,7 +3,7 @@ package protocol
 import (
 	"encoding/json"
 
-	"github.com/tliron/glsp"
+	"github.com/SCKelemen/lsp"
 )
 
 type CustomRequestHandler struct {

@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/sourcegraph/jsonrpc2"
-	"github.com/tliron/glsp"
+	"github.com/SCKelemen/lsp"
 )
 
 // See: https://github.com/sourcegraph/go-langserver/blob/master/langserver/handler.go#L206

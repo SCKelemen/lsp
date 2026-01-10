@@ -3,8 +3,8 @@ package protocol
 import (
 	"encoding/json"
 
-	"github.com/tliron/glsp"
-	protocol316 "github.com/tliron/glsp/protocol_3_16"
+	"github.com/SCKelemen/lsp"
+	protocol316 "github.com/SCKelemen/lsp/protocol_3_16"
 )
 
 // https://microsoft.github.io/language-server-protocol/specifications/specification-3-16#initialize

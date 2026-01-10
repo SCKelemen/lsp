@@ -1,4 +1,4 @@
-module github.com/tliron/glsp
+module github.com/SCKelemen/lsp
 
 go 1.22
 
