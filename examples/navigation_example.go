@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/SCKelemen/lsp/core"
+	"github.com/SCKelemen/unicode/uax29"
 )
 
 // SimpleHoverProvider provides hover information for Go code.
@@ -397,15 +398,20 @@ func (p *MarkedStringHoverProvider) ProvideHover(uri, content string, position c
 		return nil
 	}
 
-	// Find word range
+	// Find word range using UAX29
+	breaks := uax29.FindWordBreaks(line)
 	wordStart := position.Character
-	for wordStart > 0 && p.isIdentChar(line[wordStart-1]) {
-		wordStart--
-	}
-
 	wordEnd := position.Character
-	for wordEnd < len(line) && p.isIdentChar(line[wordEnd]) {
-		wordEnd++
+
+	for i := 0; i < len(breaks)-1; i++ {
+		start := breaks[i]
+		end := breaks[i+1]
+
+		if position.Character >= start && position.Character < end {
+			wordStart = start
+			wordEnd = end
+			break
+		}
 	}
 
 	r := core.Range{
@@ -424,25 +430,41 @@ func (p *MarkedStringHoverProvider) getWordAtPosition(line string, pos int) stri
 		return ""
 	}
 
-	start := pos
-	for start > 0 && p.isIdentChar(line[start-1]) {
-		start--
-	}
-
-	end := pos
-	for end < len(line) && p.isIdentChar(line[end]) {
-		end++
-	}
-
-	if start >= end {
+	// Get all word boundaries in the line using UAX29
+	breaks := uax29.FindWordBreaks(line)
+	if len(breaks) < 2 {
 		return ""
 	}
 
-	return line[start:end]
-}
+	// Find which word boundary the position falls into
+	for i := 0; i < len(breaks)-1; i++ {
+		start := breaks[i]
+		end := breaks[i+1]
 
-func (p *MarkedStringHoverProvider) isIdentChar(ch byte) bool {
-	return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_'
+		if pos >= start && pos < end {
+			// Check if this segment is actually a word (not whitespace or punctuation)
+			word := line[start:end]
+			if len(strings.TrimSpace(word)) == 0 {
+				return "" // Just whitespace
+			}
+
+			// Check if it contains at least one alphanumeric character
+			hasAlphaNum := false
+			for _, r := range word {
+				if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '_' || r > 127 {
+					hasAlphaNum = true
+					break
+				}
+			}
+			if !hasAlphaNum {
+				return "" // Just punctuation
+			}
+
+			return word
+		}
+	}
+
+	return ""
 }
 
 func (p *MarkedStringHoverProvider) getKeywordHover(word string) string {

@@ -5,6 +5,7 @@ import (
 	"unicode"
 
 	"github.com/SCKelemen/lsp/core"
+	"github.com/SCKelemen/unicode/uax29"
 )
 
 // SimpleHighlightProvider highlights all occurrences of a word in a document.
@@ -20,32 +21,35 @@ func (p *SimpleHighlightProvider) ProvideDocumentHighlights(ctx core.DocumentHig
 		return nil
 	}
 
-	// Find all occurrences of this word
-	content := ctx.Content
-	wordLen := len(word)
+	// Get all word boundaries in the content
+	breaks := uax29.FindWordBreaks(ctx.Content)
+	if len(breaks) < 2 {
+		return nil
+	}
 
-	for i := 0; i <= len(content)-wordLen; i++ {
-		// Check if we have a word match
-		if content[i:i+wordLen] == word {
-			// Check word boundaries (don't match partial words)
-			beforeOk := i == 0 || !isWordChar(rune(content[i-1]))
-			afterOk := i+wordLen >= len(content) || !isWordChar(rune(content[i+wordLen]))
+	// Find all occurrences of this word using UAX29 word boundaries
+	for i := 0; i < len(breaks)-1; i++ {
+		start := breaks[i]
+		end := breaks[i+1]
 
-			if beforeOk && afterOk {
-				startPos := core.ByteOffsetToPosition(content, i)
-				endPos := core.ByteOffsetToPosition(content, i+wordLen)
+		// Extract the word at this boundary
+		candidateWord := ctx.Content[start:end]
 
-				// Default to Text highlighting
-				kind := core.DocumentHighlightKindText
+		// Check if this word matches our target word
+		if candidateWord == word {
+			startPos := core.ByteOffsetToPosition(ctx.Content, start)
+			endPos := core.ByteOffsetToPosition(ctx.Content, end)
 
-				highlights = append(highlights, core.DocumentHighlight{
-					Range: core.Range{
-						Start: startPos,
-						End:   endPos,
-					},
-					Kind: &kind,
-				})
-			}
+			// Default to Text highlighting
+			kind := core.DocumentHighlightKindText
+
+			highlights = append(highlights, core.DocumentHighlight{
+				Range: core.Range{
+					Start: startPos,
+					End:   endPos,
+				},
+				Kind: &kind,
+			})
 		}
 	}
 
@@ -65,59 +69,93 @@ func (p *VariableHighlightProvider) ProvideDocumentHighlights(ctx core.DocumentH
 		return nil
 	}
 
-	content := ctx.Content
-	wordLen := len(word)
+	// Get all word boundaries in the content
+	breaks := uax29.FindWordBreaks(ctx.Content)
+	if len(breaks) < 2 {
+		return nil
+	}
 
-	for i := 0; i <= len(content)-wordLen; i++ {
-		if content[i:i+wordLen] == word {
-			// Check word boundaries
-			beforeOk := i == 0 || !isWordChar(rune(content[i-1]))
-			afterOk := i+wordLen >= len(content) || !isWordChar(rune(content[i+wordLen]))
+	// Find all occurrences of this word using UAX29 word boundaries
+	for i := 0; i < len(breaks)-1; i++ {
+		start := breaks[i]
+		end := breaks[i+1]
 
-			if beforeOk && afterOk {
-				startPos := core.ByteOffsetToPosition(content, i)
-				endPos := core.ByteOffsetToPosition(content, i+wordLen)
+		// Extract the word at this boundary
+		candidateWord := ctx.Content[start:end]
 
-				// Determine if this is a read or write based on context
-				kind := determineHighlightKind(content, i, wordLen)
+		// Check if this word matches our target word
+		if candidateWord == word {
+			startPos := core.ByteOffsetToPosition(ctx.Content, start)
+			endPos := core.ByteOffsetToPosition(ctx.Content, end)
 
-				highlights = append(highlights, core.DocumentHighlight{
-					Range: core.Range{
-						Start: startPos,
-						End:   endPos,
-					},
-					Kind: &kind,
-				})
-			}
+			// Determine if this is a read or write based on context
+			kind := determineHighlightKind(ctx.Content, start, end-start)
+
+			highlights = append(highlights, core.DocumentHighlight{
+				Range: core.Range{
+					Start: startPos,
+					End:   endPos,
+				},
+				Kind: &kind,
+			})
 		}
 	}
 
 	return highlights
 }
 
-// Helper: Get the word at a position
+// Helper: Get the word at a position using Unicode word boundaries
 func getWordAtPosition(content string, pos core.Position) string {
 	offset := core.PositionToByteOffset(content, pos)
-	if offset >= len(content) {
+	if offset < 0 || offset >= len(content) {
 		return ""
 	}
 
-	// Find word boundaries
-	start := offset
-	for start > 0 && isWordChar(rune(content[start-1])) {
-		start--
-	}
-
-	end := offset
-	for end < len(content) && isWordChar(rune(content[end])) {
-		end++
-	}
-
-	if start >= end {
+	// Get all word boundaries in the content
+	breaks := uax29.FindWordBreaks(content)
+	if len(breaks) < 2 {
 		return ""
 	}
 
-	return content[start:end]
+	// Helper function to check if a segment is a valid word
+	isValidWord := func(word string) bool {
+		if len(strings.TrimSpace(word)) == 0 {
+			return false // Just whitespace
+		}
+
+		// Check if it contains at least one alphanumeric character
+		for _, r := range word {
+			if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '_' || r > 127 {
+				return true
+			}
+		}
+		return false // Just punctuation
+	}
+
+	// Find which word boundary the offset falls into
+	for i := 0; i < len(breaks)-1; i++ {
+		start := breaks[i]
+		end := breaks[i+1]
+
+		if offset >= start && offset < end {
+			word := content[start:end]
+			if isValidWord(word) {
+				return word
+			}
+			// If cursor is on whitespace/punctuation, try the previous word
+			if i > 0 {
+				prevStart := breaks[i-1]
+				prevEnd := breaks[i]
+				prevWord := content[prevStart:prevEnd]
+				if isValidWord(prevWord) {
+					return prevWord
+				}
+			}
+			return ""
+		}
+	}
+
+	return ""
 }
 
 // Helper: Check if character is part of a word
