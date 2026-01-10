@@ -2,6 +2,11 @@
 
 This LSP library provides protocol-agnostic core types that use UTF-8 byte offsets for natural Go string handling. This makes it easy to use LSP data structures in CLI tools and other contexts without the overhead of UTF-16 conversion.
 
+**LSP Specification References:**
+- LSP 3.16: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/
+- LSP 3.17: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/
+- Position Encoding (UTF-16): https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/#textDocuments
+
 ## Architecture Overview
 
 ```
@@ -29,18 +34,21 @@ This LSP library provides protocol-agnostic core types that use UTF-8 byte offse
 
 ### `core/`
 Protocol-agnostic types using UTF-8 byte offsets:
-- **Position**: Line and UTF-8 byte offset
-- **Range**: Start and end positions
-- **Location**: URI and range
-- **Diagnostic**: Error/warning with range, severity, code, etc.
+- **Position**: Line and UTF-8 byte offset ([LSP Spec](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/#position))
+- **Range**: Start and end positions ([LSP Spec](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/#range))
+- **Location**: URI and range ([LSP Spec](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/#location))
+- **Diagnostic**: Error/warning with range, severity, code, etc. ([LSP Spec](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/#diagnostic))
 - **DocumentManager**: Utility for managing documents in memory
 
 ### `adapter_3_16/` and `adapter_3_17/`
 Convert between core types (UTF-8) and protocol types (UTF-16):
-- Position conversions
+- Position conversions (UTF-8 ↔ UTF-16 code units)
 - Range conversions
 - Diagnostic conversions
 - Batch conversion helpers
+
+**Important:** The LSP specification requires UTF-16 code units for character offsets, not UTF-8 bytes.
+Our adapters handle this conversion automatically at API boundaries.
 
 ## Usage Patterns
 

@@ -1,16 +1,26 @@
 // Package core provides protocol-agnostic types for language server operations.
 // These types are optimized for Go usage and CLI tools, using UTF-8 byte offsets
 // instead of LSP's UTF-16 code units. Adapters handle conversion to/from protocol types.
+//
+// LSP Specification: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/
 package core
 
 import "fmt"
 
 // Position represents a position in a text document using zero-based line and UTF-8 byte offset.
-// Unlike LSP protocol Position (which uses UTF-16 code units), this uses natural Go string indexing.
+//
+// IMPORTANT: Unlike LSP protocol Position (which uses UTF-16 code units per the spec),
+// this core type uses UTF-8 byte offsets for natural Go string indexing. Use adapter
+// functions to convert between core and protocol types at API boundaries.
+//
+// LSP Specification: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/#position
+// Protocol Position uses UTF-16 code units: { line: uinteger, character: uinteger }
+// Core Position uses UTF-8 byte offsets: { Line: int, Character: int }
 type Position struct {
-	// Line is the zero-based line number
+	// Line is the zero-based line number (compatible with LSP spec)
 	Line int
 	// Character is the zero-based UTF-8 byte offset within the line
+	// (LSP spec uses UTF-16 code units; conversion happens in adapters)
 	Character int
 }
 
@@ -25,6 +35,10 @@ func (p Position) IsValid() bool {
 }
 
 // Range represents a text range in a document with start and end positions.
+//
+// LSP Specification: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/#range
+// Protocol: { start: Position, end: Position }
+// Both start and end positions use UTF-8 offsets in core (UTF-16 in protocol).
 type Range struct {
 	Start Position
 	End   Position
@@ -64,6 +78,9 @@ func (r Range) Contains(p Position) bool {
 }
 
 // Location represents a location in a resource (file, document, etc.) with a URI and range.
+//
+// LSP Specification: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/#location
+// Protocol: { uri: DocumentUri, range: Range }
 type Location struct {
 	// URI is the resource identifier (file path, URL, etc.)
 	URI string
@@ -83,6 +100,10 @@ func (l Location) IsValid() bool {
 
 // LocationLink represents a link between two locations, typically for navigation features.
 // The origin is where the user initiated the action, and the target is where to navigate.
+//
+// LSP Specification: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/#locationLink
+// Protocol: { originSelectionRange?: Range, targetUri: DocumentUri, targetRange: Range, targetSelectionRange: Range }
+// Used for "Go to Definition" with better UX than plain Location.
 type LocationLink struct {
 	// OriginSelectionRange is the range in the origin document that is linked (optional)
 	OriginSelectionRange *Range

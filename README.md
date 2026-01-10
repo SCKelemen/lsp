@@ -6,12 +6,16 @@ A Go library for implementing Language Server Protocol (LSP) servers with protoc
 
 **Forked from [tliron/glsp](https://github.com/tliron/glsp)** with major architectural improvements.
 
+**LSP Specification References:**
+- [LSP 3.16 Specification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/)
+- [LSP 3.17 Specification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/)
+
 ## Key Features
 
-- **Protocol-Agnostic Core Types**: Work with UTF-8 byte offsets naturally in Go
+- **Protocol-Agnostic Core Types**: Work with UTF-8 byte offsets naturally in Go (see [Position spec](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/#position))
 - **CLI-First Design**: Use LSP data structures in CLI tools without protocol overhead
 - **Reusable Providers**: Write business logic once, use in both CLI and LSP server
-- **Automatic UTF-16 Conversion**: Adapters handle protocol conversion at boundaries
+- **Automatic UTF-16 Conversion**: Adapters handle protocol conversion at boundaries per LSP spec requirements
 - **Full LSP Support**: Implements LSP 3.16 and 3.17
 
 ## Quick Start

@@ -1,6 +1,12 @@
+// Package core provides diagnostic types for reporting errors, warnings, and hints.
+//
+// LSP Specification: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/#diagnostic
 package core
 
 // DiagnosticSeverity indicates the severity level of a diagnostic.
+//
+// LSP Specification: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/#diagnosticSeverity
+// Values: Error = 1, Warning = 2, Information = 3, Hint = 4
 type DiagnosticSeverity int
 
 const (
@@ -31,6 +37,9 @@ func (s DiagnosticSeverity) String() string {
 }
 
 // DiagnosticTag provides additional metadata about a diagnostic.
+//
+// LSP Specification: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/#diagnosticTag
+// Values: Unnecessary = 1, Deprecated = 2
 type DiagnosticTag int
 
 const (
@@ -54,6 +63,9 @@ func (t DiagnosticTag) String() string {
 
 // CodeDescription provides additional information about a diagnostic code,
 // typically a URL to documentation.
+//
+// LSP Specification: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/#codeDescription
+// Protocol: { href: URI }
 type CodeDescription struct {
 	// HRef is a URI pointing to documentation or more information
 	HRef string
@@ -61,6 +73,9 @@ type CodeDescription struct {
 
 // DiagnosticRelatedInformation represents a related location and message for a diagnostic.
 // This is used to show related code locations that contribute to or are affected by the diagnostic.
+//
+// LSP Specification: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/#diagnosticRelatedInformation
+// Protocol: { location: Location, message: string }
 type DiagnosticRelatedInformation struct {
 	// Location is where the related information is
 	Location Location
@@ -98,6 +113,12 @@ func (c DiagnosticCode) String() string {
 
 // Diagnostic represents a diagnostic message such as a compiler error or warning.
 // Diagnostics are the primary way to report problems found during analysis.
+//
+// LSP Specification: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/#diagnostic
+// Protocol: { range: Range, severity?: DiagnosticSeverity, code?: integer | string,
+//            codeDescription?: CodeDescription, source?: string, message: string,
+//            tags?: DiagnosticTag[], relatedInformation?: DiagnosticRelatedInformation[],
+//            data?: any }
 type Diagnostic struct {
 	// Range is where the diagnostic applies
 	Range Range
