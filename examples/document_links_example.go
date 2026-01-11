@@ -274,7 +274,7 @@ func main() {
 
 // Example usage in LSP server
 // func (s *Server) TextDocumentDocumentLink(
-// 	ctx *glsp.Context,
+// 	ctx *lsp.Context,
 // 	params *protocol.DocumentLinkParams,
 // ) ([]protocol.DocumentLink, error) {
 // 	uri := string(params.TextDocument.URI)

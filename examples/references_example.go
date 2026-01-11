@@ -258,7 +258,7 @@ func main() {
 
 // Example usage in LSP server
 // func (s *Server) TextDocumentReferences(
-// 	ctx *glsp.Context,
+// 	ctx *lsp.Context,
 // 	params *protocol.ReferenceParams,
 // ) ([]protocol.Location, error) {
 // 	uri := string(params.TextDocument.URI)

@@ -219,7 +219,7 @@ func NewProviderBasedServer() *ProviderBasedServer {
 
 // TextDocumentDidOpen handler - publishes diagnostics
 func (s *ProviderBasedServer) TextDocumentDidOpen(
-	context *glsp.Context,
+	context *lsp.Context,
 	params *protocol.DidOpenTextDocumentParams,
 ) error {
 	uri := string(params.TextDocument.URI)
@@ -243,7 +243,7 @@ func (s *ProviderBasedServer) TextDocumentDidOpen(
 
 // TextDocumentCodeAction handler - provides code actions
 func (s *ProviderBasedServer) TextDocumentCodeAction(
-	context *glsp.Context,
+	context *lsp.Context,
 	params *protocol.CodeActionParams,
 ) ([]protocol.CodeAction, error) {
 	uri := string(params.TextDocument.URI)

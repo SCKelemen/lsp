@@ -363,7 +363,7 @@ func CalculateSum(a, b int) int {
 
 // Example usage in LSP server
 // func (s *Server) TextDocumentCodeLens(
-// 	ctx *glsp.Context,
+// 	ctx *lsp.Context,
 // 	params *protocol.CodeLensParams,
 // ) ([]protocol.CodeLens, error) {
 // 	uri := string(params.TextDocument.URI)
@@ -382,7 +382,7 @@ func CalculateSum(a, b int) int {
 // }
 //
 // func (s *Server) CodeLensResolve(
-// 	ctx *glsp.Context,
+// 	ctx *lsp.Context,
 // 	params *protocol.CodeLens,
 // ) (*protocol.CodeLens, error) {
 // 	// Convert protocol to core

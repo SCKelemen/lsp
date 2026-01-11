@@ -23,7 +23,7 @@ func NewExampleLanguageServer() *ExampleLanguageServer {
 
 // TextDocumentDidOpen handles document open notifications.
 // This converts protocol types to core types at the boundary.
-func (s *ExampleLanguageServer) TextDocumentDidOpen(context *glsp.Context, params *protocol.DidOpenTextDocumentParams) error {
+func (s *ExampleLanguageServer) TextDocumentDidOpen(context *lsp.Context, params *protocol.DidOpenTextDocumentParams) error {
 	// Extract protocol types
 	uri := string(params.TextDocument.URI)
 	content := params.TextDocument.Text
@@ -81,7 +81,7 @@ func (s *ExampleLanguageServer) validateDocument(uri, content string) []core.Dia
 
 // TextDocumentDefinition handles go-to-definition requests.
 // Shows how to work with positions using core types.
-func (s *ExampleLanguageServer) TextDocumentDefinition(context *glsp.Context, params *protocol.DefinitionParams) (any, error) {
+func (s *ExampleLanguageServer) TextDocumentDefinition(context *lsp.Context, params *protocol.DefinitionParams) (any, error) {
 	uri := string(params.TextDocument.URI)
 	content := s.documents.GetContent(uri)
 
@@ -115,7 +115,7 @@ func (s *ExampleLanguageServer) findDefinition(uri, content string, pos core.Pos
 
 // TextDocumentDidChange handles document change notifications.
 // Shows how to apply edits using core types.
-func (s *ExampleLanguageServer) TextDocumentDidChange(context *glsp.Context, params *protocol.DidChangeTextDocumentParams) error {
+func (s *ExampleLanguageServer) TextDocumentDidChange(context *lsp.Context, params *protocol.DidChangeTextDocumentParams) error {
 	_ = string(params.TextDocument.URI)
 
 	// For full document updates, just replace the entire content

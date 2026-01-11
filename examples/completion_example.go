@@ -473,7 +473,7 @@ func main() {
 
 // Example usage in LSP server
 // func (s *Server) TextDocumentCompletion(
-// 	ctx *glsp.Context,
+// 	ctx *lsp.Context,
 // 	params *protocol.CompletionParams,
 // ) (*protocol.CompletionList, error) {
 // 	uri := string(params.TextDocument.URI)
@@ -501,7 +501,7 @@ func main() {
 // }
 //
 // func (s *Server) CompletionItemResolve(
-// 	ctx *glsp.Context,
+// 	ctx *lsp.Context,
 // 	params *protocol.CompletionItem,
 // ) (*protocol.CompletionItem, error) {
 // 	// Convert protocol to core

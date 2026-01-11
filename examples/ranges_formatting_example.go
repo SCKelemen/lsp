@@ -205,7 +205,7 @@ func main() {
 
 // Example usage in LSP server
 // func (s *Server) TextDocumentRangesFormatting(
-// 	ctx *glsp.Context,
+// 	ctx *lsp.Context,
 // 	params *protocol.DocumentRangesFormattingParams,
 // ) ([]protocol.TextEdit, error) {
 // 	uri := string(params.TextDocument.URI)

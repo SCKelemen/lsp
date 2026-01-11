@@ -232,7 +232,7 @@ func CLIHighlightExample() {
 
 // Example usage in LSP server
 // func (s *Server) TextDocumentDocumentHighlight(
-// 	ctx *glsp.Context,
+// 	ctx *lsp.Context,
 // 	params *protocol.DocumentHighlightParams,
 // ) ([]protocol.DocumentHighlight, error) {
 // 	uri := string(params.TextDocument.URI)

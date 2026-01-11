@@ -310,7 +310,7 @@ func main() {
 
 // Example usage in LSP server
 // func (s *Server) TextDocumentInlayHint(
-// 	ctx *glsp.Context,
+// 	ctx *lsp.Context,
 // 	params *protocol.InlayHintParams,
 // ) ([]protocol.InlayHint, error) {
 // 	uri := string(params.TextDocument.URI)

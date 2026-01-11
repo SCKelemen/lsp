@@ -14,7 +14,7 @@ var DefaultTimeout = time.Minute
 //
 
 type Server struct {
-	Handler     glsp.Handler
+	Handler     lsp.Handler
 	LogBaseName string
 	Debug       bool
 
@@ -26,7 +26,7 @@ type Server struct {
 	WebSocketTimeout time.Duration
 }
 
-func NewServer(handler glsp.Handler, logName string, debug bool) *Server {
+func NewServer(handler lsp.Handler, logName string, debug bool) *Server {
 	return &Server{
 		Handler:          handler,
 		LogBaseName:      logName,

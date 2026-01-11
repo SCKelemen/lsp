@@ -436,7 +436,7 @@ func CLIWorkspaceSymbolsExample() {
 
 // Example usage in LSP server
 // func (s *Server) WorkspaceSymbol(
-// 	ctx *glsp.Context,
+// 	ctx *lsp.Context,
 // 	params *protocol.WorkspaceSymbolParams,
 // ) ([]protocol.WorkspaceSymbol, error) {
 // 	// Use provider with core types

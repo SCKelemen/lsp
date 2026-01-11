@@ -401,7 +401,7 @@ func main() {
 
 // Example usage in LSP server
 // func (s *Server) TextDocumentPrepareRename(
-// 	ctx *glsp.Context,
+// 	ctx *lsp.Context,
 // 	params *protocol.PrepareRenameParams,
 // ) (*protocol.Range, error) {
 // 	uri := string(params.TextDocument.URI)
@@ -421,7 +421,7 @@ func main() {
 // }
 //
 // func (s *Server) TextDocumentRename(
-// 	ctx *glsp.Context,
+// 	ctx *lsp.Context,
 // 	params *protocol.RenameParams,
 // ) (*protocol.WorkspaceEdit, error) {
 // 	uri := string(params.TextDocument.URI)

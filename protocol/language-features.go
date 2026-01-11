@@ -168,7 +168,7 @@ type CompletionRegistrationOptions struct {
 const MethodTextDocumentCompletion = Method("textDocument/completion")
 
 // Returns: []CompletionItem | CompletionList | nil
-type TextDocumentCompletionFunc func(context *glsp.Context, params *CompletionParams) (any, error)
+type TextDocumentCompletionFunc func(context *lsp.Context, params *CompletionParams) (any, error)
 
 type CompletionParams struct {
 	TextDocumentPositionParams
@@ -660,7 +660,7 @@ const (
 
 const MethodCompletionItemResolve = Method("completionItem/resolve")
 
-type CompletionItemResolveFunc func(context *glsp.Context, params *CompletionItem) (*CompletionItem, error)
+type CompletionItemResolveFunc func(context *lsp.Context, params *CompletionItem) (*CompletionItem, error)
 
 // https://microsoft.github.io/language-server-protocol/specifications/specification-3-16#textDocument_hover
 
@@ -689,7 +689,7 @@ type HoverRegistrationOptions struct {
 
 const MethodTextDocumentHover = Method("textDocument/hover")
 
-type TextDocumentHoverFunc func(context *glsp.Context, params *HoverParams) (*Hover, error)
+type TextDocumentHoverFunc func(context *lsp.Context, params *HoverParams) (*Hover, error)
 
 type HoverParams struct {
 	TextDocumentPositionParams
@@ -872,7 +872,7 @@ type SignatureHelpRegistrationOptions struct {
 
 const MethodTextDocumentSignatureHelp = Method("textDocument/signatureHelp")
 
-type TextDocumentSignatureHelpFunc func(context *glsp.Context, params *SignatureHelpParams) (*SignatureHelp, error)
+type TextDocumentSignatureHelpFunc func(context *lsp.Context, params *SignatureHelpParams) (*SignatureHelp, error)
 
 type SignatureHelpParams struct {
 	TextDocumentPositionParams
@@ -1150,7 +1150,7 @@ type DeclarationRegistrationOptions struct {
 const MethodTextDocumentDeclaration = Method("textDocument/declaration")
 
 // Returns: Location | []Location | []LocationLink | nil
-type TextDocumentDeclarationFunc func(context *glsp.Context, params *DeclarationParams) (any, error)
+type TextDocumentDeclarationFunc func(context *lsp.Context, params *DeclarationParams) (any, error)
 
 type DeclarationParams struct {
 	TextDocumentPositionParams
@@ -1186,7 +1186,7 @@ type DefinitionRegistrationOptions struct {
 const MethodTextDocumentDefinition = Method("textDocument/definition")
 
 // Returns: Location | []Location | []LocationLink | nil
-type TextDocumentDefinitionFunc func(context *glsp.Context, params *DefinitionParams) (any, error)
+type TextDocumentDefinitionFunc func(context *lsp.Context, params *DefinitionParams) (any, error)
 
 type DefinitionParams struct {
 	TextDocumentPositionParams
@@ -1225,7 +1225,7 @@ type TypeDefinitionRegistrationOptions struct {
 const MethodTextDocumentTypeDefinition = Method("textDocument/typeDefinition")
 
 // Returns: Location | []Location | []LocationLink | nil
-type TextDocumentTypeDefinitionFunc func(context *glsp.Context, params *TypeDefinitionParams) (any, error)
+type TextDocumentTypeDefinitionFunc func(context *lsp.Context, params *TypeDefinitionParams) (any, error)
 
 type TypeDefinitionParams struct {
 	TextDocumentPositionParams
@@ -1264,7 +1264,7 @@ type ImplementationRegistrationOptions struct {
 const MethodTextDocumentImplementation = Method("textDocument/implementation")
 
 // Returns: Location | []Location | []LocationLink | nil
-type TextDocumentImplementationFunc func(context *glsp.Context, params *ImplementationParams) (any, error)
+type TextDocumentImplementationFunc func(context *lsp.Context, params *ImplementationParams) (any, error)
 
 type ImplementationParams struct {
 	TextDocumentPositionParams
@@ -1292,7 +1292,7 @@ type ReferenceRegistrationOptions struct {
 
 const MethodTextDocumentReferences = Method("textDocument/references")
 
-type TextDocumentReferencesFunc func(context *glsp.Context, params *ReferenceParams) ([]Location, error)
+type TextDocumentReferencesFunc func(context *lsp.Context, params *ReferenceParams) ([]Location, error)
 
 type ReferenceParams struct {
 	TextDocumentPositionParams
@@ -1329,7 +1329,7 @@ type DocumentHighlightRegistrationOptions struct {
 
 const MethodTextDocumentDocumentHighlight = Method("textDocument/documentHighlight")
 
-type TextDocumentDocumentHighlightFunc func(context *glsp.Context, params *DocumentHighlightParams) ([]DocumentHighlight, error)
+type TextDocumentDocumentHighlightFunc func(context *lsp.Context, params *DocumentHighlightParams) ([]DocumentHighlight, error)
 
 type DocumentHighlightParams struct {
 	TextDocumentPositionParams
@@ -1414,7 +1414,7 @@ type InlayHintRegistrationOptions struct {
 
 const MethodTextDocumentInlayHint = Method("textDocument/inlayHint")
 
-type TextDocumentInlayHintFunc func(context *glsp.Context, params *InlayHintParams) ([]InlayHint, error)
+type TextDocumentInlayHintFunc func(context *lsp.Context, params *InlayHintParams) ([]InlayHint, error)
 
 type InlayHintParams struct {
 	WorkDoneProgressParams
@@ -1432,7 +1432,7 @@ type InlayHintParams struct {
 
 const MethodInlayHintResolve = Method("inlayHint/resolve")
 
-type InlayHintResolveFunc func(context *glsp.Context, params *InlayHint) (*InlayHint, error)
+type InlayHintResolveFunc func(context *lsp.Context, params *InlayHint) (*InlayHint, error)
 
 /**
  * Inlay hint kinds.
@@ -1634,7 +1634,7 @@ type DocumentSymbolRegistrationOptions struct {
 const MethodTextDocumentDocumentSymbol = Method("textDocument/documentSymbol")
 
 // Returns: []DocumentSymbol | []SymbolInformation | nil
-type TextDocumentDocumentSymbolFunc func(context *glsp.Context, params *DocumentSymbolParams) (any, error)
+type TextDocumentDocumentSymbolFunc func(context *lsp.Context, params *DocumentSymbolParams) (any, error)
 
 type DocumentSymbolParams struct {
 	WorkDoneProgressParams
@@ -1933,7 +1933,7 @@ type CodeActionRegistrationOptions struct {
 const MethodTextDocumentCodeAction = Method("textDocument/codeAction")
 
 // Returns: Command | []CodeAction | nil
-type TextDocumentCodeActionFunc func(context *glsp.Context, params *CodeActionParams) (any, error)
+type TextDocumentCodeActionFunc func(context *lsp.Context, params *CodeActionParams) (any, error)
 
 /**
  * Params for the CodeActionRequest
@@ -2156,7 +2156,7 @@ type CodeAction struct {
 
 const MethodCodeActionResolve = Method("codeAction/resolve")
 
-type CodeActionResolveFunc func(context *glsp.Context, params *CodeAction) (*CodeAction, error)
+type CodeActionResolveFunc func(context *lsp.Context, params *CodeAction) (*CodeAction, error)
 
 // https://microsoft.github.io/language-server-protocol/specifications/specification-3-16#textDocument_codeLens
 
@@ -2195,7 +2195,7 @@ type CodeLensRegistrationOptions struct {
 
 const MethodTextDocumentCodeLens = Method("textDocument/codeLens")
 
-type TextDocumentCodeLensFunc func(context *glsp.Context, params *CodeLensParams) ([]CodeLens, error)
+type TextDocumentCodeLensFunc func(context *lsp.Context, params *CodeLensParams) ([]CodeLens, error)
 
 type CodeLensParams struct {
 	WorkDoneProgressParams
@@ -2238,7 +2238,7 @@ type CodeLens struct {
 
 const MethodCodeLensResolve = Method("codeLens/resolve")
 
-type CodeLensResolveFunc func(context *glsp.Context, params *CodeLens) (*CodeLens, error)
+type CodeLensResolveFunc func(context *lsp.Context, params *CodeLens) (*CodeLens, error)
 
 // https://microsoft.github.io/language-server-protocol/specifications/specification-3-16#codeLens_refresh
 
@@ -2289,7 +2289,7 @@ type DocumentLinkRegistrationOptions struct {
 
 const MethodTextDocumentDocumentLink = Method("textDocument/documentLink")
 
-type TextDocumentDocumentLinkFunc func(context *glsp.Context, params *DocumentLinkParams) ([]DocumentLink, error)
+type TextDocumentDocumentLinkFunc func(context *lsp.Context, params *DocumentLinkParams) ([]DocumentLink, error)
 
 type DocumentLinkParams struct {
 	WorkDoneProgressParams
@@ -2339,7 +2339,7 @@ type DocumentLink struct {
 
 const MethodDocumentLinkResolve = Method("documentLink/resolve")
 
-type DocumentLinkResolveFunc func(context *glsp.Context, params *DocumentLink) (*DocumentLink, error)
+type DocumentLinkResolveFunc func(context *lsp.Context, params *DocumentLink) (*DocumentLink, error)
 
 // https://microsoft.github.io/language-server-protocol/specifications/specification-3-16#textDocument_documentColor
 
@@ -2362,7 +2362,7 @@ type DocumentColorRegistrationOptions struct {
 
 const MethodTextDocumentColor = Method("textDocument/documentColor")
 
-type TextDocumentColorFunc func(context *glsp.Context, params *DocumentColorParams) ([]ColorInformation, error)
+type TextDocumentColorFunc func(context *lsp.Context, params *DocumentColorParams) ([]ColorInformation, error)
 
 type DocumentColorParams struct {
 	WorkDoneProgressParams
@@ -2415,7 +2415,7 @@ type Color struct {
 
 const MethodTextDocumentColorPresentation = Method("textDocument/colorPresentation")
 
-type TextDocumentColorPresentationFunc func(context *glsp.Context, params *ColorPresentationParams) ([]ColorPresentation, error)
+type TextDocumentColorPresentationFunc func(context *lsp.Context, params *ColorPresentationParams) ([]ColorPresentation, error)
 
 type ColorPresentationParams struct {
 	WorkDoneProgressParams
@@ -2480,7 +2480,7 @@ type DocumentFormattingRegistrationOptions struct {
 
 const MethodTextDocumentFormatting = Method("textDocument/formatting")
 
-type TextDocumentFormattingFunc func(context *glsp.Context, params *DocumentFormattingParams) ([]TextEdit, error)
+type TextDocumentFormattingFunc func(context *lsp.Context, params *DocumentFormattingParams) ([]TextEdit, error)
 
 type DocumentFormattingParams struct {
 	WorkDoneProgressParams
@@ -2554,7 +2554,7 @@ type DocumentRangeFormattingRegistrationOptions struct {
 
 const MethodTextDocumentRangeFormatting = Method("textDocument/rangeFormatting")
 
-type TextDocumentRangeFormattingFunc func(context *glsp.Context, params *DocumentRangeFormattingParams) ([]TextEdit, error)
+type TextDocumentRangeFormattingFunc func(context *lsp.Context, params *DocumentRangeFormattingParams) ([]TextEdit, error)
 
 type DocumentRangeFormattingParams struct {
 	WorkDoneProgressParams
@@ -2627,7 +2627,7 @@ type DocumentOnTypeFormattingRegistrationOptions struct {
 
 const MethodTextDocumentOnTypeFormatting = Method("textDocument/onTypeFormatting")
 
-type TextDocumentOnTypeFormattingFunc func(context *glsp.Context, params *DocumentOnTypeFormattingParams) ([]TextEdit, error)
+type TextDocumentOnTypeFormattingFunc func(context *lsp.Context, params *DocumentOnTypeFormattingParams) ([]TextEdit, error)
 
 type DocumentOnTypeFormattingParams struct {
 	TextDocumentPositionParams
@@ -2707,7 +2707,7 @@ type RenameRegistrationOptions struct {
 
 const MethodTextDocumentRename = Method("textDocument/rename")
 
-type TextDocumentRenameFunc func(context *glsp.Context, params *RenameParams) (*WorkspaceEdit, error)
+type TextDocumentRenameFunc func(context *lsp.Context, params *RenameParams) (*WorkspaceEdit, error)
 
 type RenameParams struct {
 	TextDocumentPositionParams
@@ -2726,7 +2726,7 @@ type RenameParams struct {
 const MethodTextDocumentPrepareRename = Method("textDocument/prepareRename")
 
 // Returns: Range | RangeWithPlaceholder | DefaultBehavior | nil
-type TextDocumentPrepareRenameFunc func(context *glsp.Context, params *PrepareRenameParams) (any, error)
+type TextDocumentPrepareRenameFunc func(context *lsp.Context, params *PrepareRenameParams) (any, error)
 
 type PrepareRenameParams struct {
 	TextDocumentPositionParams
@@ -2786,7 +2786,7 @@ type FoldingRangeRegistrationOptions struct {
 
 const MethodTextDocumentFoldingRange = Method("textDocument/foldingRange")
 
-type TextDocumentFoldingRangeFunc func(context *glsp.Context, params *FoldingRangeParams) ([]FoldingRange, error)
+type TextDocumentFoldingRangeFunc func(context *lsp.Context, params *FoldingRangeParams) ([]FoldingRange, error)
 
 type FoldingRangeParams struct {
 	WorkDoneProgressParams
@@ -2885,7 +2885,7 @@ type SelectionRangeRegistrationOptions struct {
 
 const MethodTextDocumentSelectionRange = Method("textDocument/selectionRange")
 
-type TextDocumentSelectionRangeFunc func(context *glsp.Context, params *SelectionRangeParams) ([]SelectionRange, error)
+type TextDocumentSelectionRangeFunc func(context *lsp.Context, params *SelectionRangeParams) ([]SelectionRange, error)
 
 type SelectionRangeParams struct {
 	WorkDoneProgressParams
@@ -2939,7 +2939,7 @@ type CallHierarchyRegistrationOptions struct {
 
 const MethodTextDocumentPrepareCallHierarchy = Method("textDocument/prepareCallHierarchy")
 
-type TextDocumentPrepareCallHierarchyFunc func(context *glsp.Context, params *CallHierarchyPrepareParams) ([]CallHierarchyItem, error)
+type TextDocumentPrepareCallHierarchyFunc func(context *lsp.Context, params *CallHierarchyPrepareParams) ([]CallHierarchyItem, error)
 
 type CallHierarchyPrepareParams struct {
 	TextDocumentPositionParams
@@ -2996,7 +2996,7 @@ type CallHierarchyItem struct {
 
 const MethodCallHierarchyIncomingCalls = Method("callHierarchy/incomingCalls")
 
-type CallHierarchyIncomingCallsFunc func(context *glsp.Context, params *CallHierarchyIncomingCallsParams) ([]CallHierarchyIncomingCall, error)
+type CallHierarchyIncomingCallsFunc func(context *lsp.Context, params *CallHierarchyIncomingCallsParams) ([]CallHierarchyIncomingCall, error)
 
 type CallHierarchyIncomingCallsParams struct {
 	WorkDoneProgressParams
@@ -3022,7 +3022,7 @@ type CallHierarchyIncomingCall struct {
 
 const MethodCallHierarchyOutgoingCalls = Method("callHierarchy/outgoingCalls")
 
-type CallHierarchyOutgoingCallsFunc func(context *glsp.Context, params *CallHierarchyOutgoingCallsParams) ([]CallHierarchyOutgoingCall, error)
+type CallHierarchyOutgoingCallsFunc func(context *lsp.Context, params *CallHierarchyOutgoingCallsParams) ([]CallHierarchyOutgoingCall, error)
 
 type CallHierarchyOutgoingCallsParams struct {
 	WorkDoneProgressParams
@@ -3303,7 +3303,7 @@ type SemanticTokensRegistrationOptions struct {
 
 const MethodTextDocumentSemanticTokensFull = Method("textDocument/semanticTokens/full")
 
-type TextDocumentSemanticTokensFullFunc func(context *glsp.Context, params *SemanticTokensParams) (*SemanticTokens, error)
+type TextDocumentSemanticTokensFullFunc func(context *lsp.Context, params *SemanticTokensParams) (*SemanticTokens, error)
 
 type SemanticTokensParams struct {
 	WorkDoneProgressParams
@@ -3337,7 +3337,7 @@ type SemanticTokensPartialResult struct {
 const MethodTextDocumentSemanticTokensFullDelta = Method("textDocument/semanticTokens/full/delta")
 
 // Returns: SemanticTokens | SemanticTokensDelta | SemanticTokensDeltaPartialResult | nil
-type TextDocumentSemanticTokensFullDeltaFunc func(context *glsp.Context, params *SemanticTokensDeltaParams) (any, error)
+type TextDocumentSemanticTokensFullDeltaFunc func(context *lsp.Context, params *SemanticTokensDeltaParams) (any, error)
 
 type SemanticTokensDeltaParams struct {
 	WorkDoneProgressParams
@@ -3389,7 +3389,7 @@ type SemanticTokensDeltaPartialResult struct {
 const MethodTextDocumentSemanticTokensRange = Method("textDocument/semanticTokens/range")
 
 // Returns: SemanticTokens | SemanticTokensPartialResult | nil
-type TextDocumentSemanticTokensRangeFunc func(context *glsp.Context, params *SemanticTokensRangeParams) (any, error)
+type TextDocumentSemanticTokensRangeFunc func(context *lsp.Context, params *SemanticTokensRangeParams) (any, error)
 
 type SemanticTokensRangeParams struct {
 	WorkDoneProgressParams
@@ -3430,7 +3430,7 @@ type LinkedEditingRangeRegistrationOptions struct {
 
 const MethodTextDocumentLinkedEditingRange = Method("textDocument/linkedEditingRange")
 
-type TextDocumentLinkedEditingRangeFunc func(context *glsp.Context, params *LinkedEditingRangeParams) (*LinkedEditingRanges, error)
+type TextDocumentLinkedEditingRangeFunc func(context *lsp.Context, params *LinkedEditingRangeParams) (*LinkedEditingRanges, error)
 
 type LinkedEditingRangeParams struct {
 	TextDocumentPositionParams
@@ -3475,7 +3475,7 @@ type MonikerRegistrationOptions struct {
 
 const MethodTextDocumentMoniker = Method("textDocument/moniker")
 
-type TextDocumentMonikerFunc func(context *glsp.Context, params *MonikerParams) ([]Moniker, error)
+type TextDocumentMonikerFunc func(context *lsp.Context, params *MonikerParams) ([]Moniker, error)
 
 type MonikerParams struct {
 	TextDocumentPositionParams
