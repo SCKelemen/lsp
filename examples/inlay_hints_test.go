@@ -455,3 +455,120 @@ func main() {
 		}
 	}
 }
+
+func TestGoInlayHintResolveProvider(t *testing.T) {
+	provider := &GoInlayHintResolveProvider{}
+
+	tests := []struct {
+		name       string
+		hint       core.InlayHint
+		wantChange bool // Whether we expect the hint to change
+	}{
+		{
+			name: "resolve with data",
+			hint: core.InlayHint{
+				Position: core.Position{Line: 0, Character: 10},
+				Label:    "count:",
+				Data:     map[string]interface{}{"paramName": "count", "funcName": "test"},
+			},
+			wantChange: true,
+		},
+		{
+			name: "resolve without data",
+			hint: core.InlayHint{
+				Position: core.Position{Line: 0, Character: 10},
+				Label:    "count:",
+				Data:     nil,
+			},
+			wantChange: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			resolved := provider.ResolveInlayHint(tt.hint)
+
+			changed := resolved.Tooltip != tt.hint.Tooltip
+
+			if changed != tt.wantChange {
+				t.Errorf("expected change = %v, got %v (tooltip: %q)", tt.wantChange, changed, resolved.Tooltip)
+			}
+
+			// Verify the hint still has its core properties
+			if resolved.Label != tt.hint.Label {
+				t.Errorf("label changed unexpectedly: %q -> %q", tt.hint.Label, resolved.Label)
+			}
+
+			if resolved.Position != tt.hint.Position {
+				t.Errorf("position changed unexpectedly")
+			}
+		})
+	}
+}
+
+func TestAdvancedInlayHintResolveProvider(t *testing.T) {
+	provider := &AdvancedInlayHintResolveProvider{}
+
+	paramKind := core.InlayHintKindParameter
+	typeKind := core.InlayHintKindType
+
+	tests := []struct {
+		name           string
+		hint           core.InlayHint
+		wantTooltip    bool
+		tooltipContains string
+	}{
+		{
+			name: "resolve parameter hint",
+			hint: core.InlayHint{
+				Position: core.Position{Line: 0, Character: 10},
+				Label:    "count:",
+				Kind:     &paramKind,
+				Data: map[string]interface{}{
+					"paramName": "count",
+					"funcName":  "PrintCount",
+				},
+			},
+			wantTooltip:     true,
+			tooltipContains: "Parameter 'count'",
+		},
+		{
+			name: "resolve type hint",
+			hint: core.InlayHint{
+				Position: core.Position{Line: 0, Character: 10},
+				Label:    ": string",
+				Kind:     &typeKind,
+				Data: map[string]interface{}{
+					"typeName": "string",
+				},
+			},
+			wantTooltip:     true,
+			tooltipContains: "Inferred type: string",
+		},
+		{
+			name: "hint without data",
+			hint: core.InlayHint{
+				Position: core.Position{Line: 0, Character: 10},
+				Label:    "value:",
+				Data:     nil,
+			},
+			wantTooltip: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			resolved := provider.ResolveInlayHint(tt.hint)
+
+			hasTooltip := resolved.Tooltip != ""
+
+			if hasTooltip != tt.wantTooltip {
+				t.Errorf("expected tooltip = %v, got %v (tooltip: %q)", tt.wantTooltip, hasTooltip, resolved.Tooltip)
+			}
+
+			if tt.tooltipContains != "" && !containsInMiddle(resolved.Tooltip, tt.tooltipContains) {
+				t.Errorf("expected tooltip to contain %q, got %q", tt.tooltipContains, resolved.Tooltip)
+			}
+		})
+	}
+}

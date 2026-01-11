@@ -325,3 +325,109 @@ func main() {
 // 	// Convert back to protocol
 // 	return adapter_3_16.CoreToProtocolInlayHints(coreHints, content), nil
 // }
+
+// GoInlayHintResolveProvider resolves additional details for inlay hints lazily.
+// This is useful for expensive operations like fetching documentation or type information.
+type GoInlayHintResolveProvider struct{}
+
+func (p *GoInlayHintResolveProvider) ResolveInlayHint(hint core.InlayHint) core.InlayHint {
+	// In a real implementation, this would fetch additional information
+	// based on the hint's Data field which could contain identifiers or positions.
+	
+	// For this example, we'll add a tooltip with documentation
+	if hint.Data != nil {
+		// The Data field could contain information like:
+		// - Function signature
+		// - Parameter documentation  
+		// - Type information
+		
+		// Simulate resolving tooltip documentation
+		if hint.Tooltip == "" {
+			hint.Tooltip = p.resolveTooltip(hint)
+		}
+	}
+	
+	return hint
+}
+
+// resolveTooltip simulates fetching documentation for the hint
+func (p *GoInlayHintResolveProvider) resolveTooltip(hint core.InlayHint) string {
+	// In production, this would:
+	// 1. Parse the Data field to extract identifiers
+	// 2. Look up documentation from go/doc
+	// 3. Format it nicely
+	
+	// For demonstration, return a simple message
+	kind := "parameter"
+	if hint.Kind != nil && *hint.Kind == core.InlayHintKindType {
+		kind = "type"
+	}
+	
+	return fmt.Sprintf("Inlay hint for %s: %s", kind, hint.Label)
+}
+
+// AdvancedInlayHintResolveProvider demonstrates more sophisticated resolution
+type AdvancedInlayHintResolveProvider struct {
+	// In production, might include:
+	// - Documentation cache
+	// - Package information
+	// - Type system
+}
+
+func (p *AdvancedInlayHintResolveProvider) ResolveInlayHint(hint core.InlayHint) core.InlayHint {
+	// Check if there's data to resolve
+	if hint.Data == nil {
+		return hint
+	}
+	
+	// Extract data (could be JSON, string, or any serializable data)
+	dataMap, ok := hint.Data.(map[string]interface{})
+	if !ok {
+		return hint
+	}
+	
+	// Resolve different types of information based on hint kind
+	if hint.Kind != nil {
+		switch *hint.Kind {
+		case core.InlayHintKindParameter:
+			hint = p.resolveParameterHint(hint, dataMap)
+		case core.InlayHintKindType:
+			hint = p.resolveTypeHint(hint, dataMap)
+		}
+	}
+	
+	return hint
+}
+
+func (p *AdvancedInlayHintResolveProvider) resolveParameterHint(hint core.InlayHint, data map[string]interface{}) core.InlayHint {
+	// Could resolve:
+	// - Parameter documentation
+	// - Expected types
+	// - Default values
+	
+	paramName, _ := data["paramName"].(string)
+	funcName, _ := data["funcName"].(string)
+	
+	if paramName != "" && funcName != "" {
+		hint.Tooltip = fmt.Sprintf("Parameter '%s' of function '%s'\n\nClick to see full documentation.", 
+			paramName, funcName)
+	}
+	
+	return hint
+}
+
+func (p *AdvancedInlayHintResolveProvider) resolveTypeHint(hint core.InlayHint, data map[string]interface{}) core.InlayHint {
+	// Could resolve:
+	// - Full type information
+	// - Type documentation
+	// - Implementation details
+	
+	typeName, _ := data["typeName"].(string)
+	
+	if typeName != "" {
+		hint.Tooltip = fmt.Sprintf("Inferred type: %s\n\nClick to navigate to type definition.", 
+			typeName)
+	}
+	
+	return hint
+}
