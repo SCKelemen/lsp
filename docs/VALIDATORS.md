@@ -458,7 +458,7 @@ func NewMyServer() *MyServer {
 
 ```go
 func (s *MyServer) TextDocumentDidOpen(
-    ctx *glsp.Context,
+    ctx *lsp.Context,
     params *protocol.DidOpenTextDocumentParams,
 ) error {
     uri := string(params.TextDocument.URI)
@@ -489,7 +489,7 @@ func (s *MyServer) TextDocumentDidOpen(
 
 ```go
 func (s *MyServer) TextDocumentDidChange(
-    ctx *glsp.Context,
+    ctx *lsp.Context,
     params *protocol.DidChangeTextDocumentParams,
 ) error {
     uri := string(params.TextDocument.URI)
@@ -536,7 +536,7 @@ func (s *MyServer) TextDocumentDidChange(
 
 ```go
 func (s *MyServer) TextDocumentCodeAction(
-    ctx *glsp.Context,
+    ctx *lsp.Context,
     params *protocol.CodeActionParams,
 ) ([]protocol.CodeAction, error) {
     uri := string(params.TextDocument.URI)

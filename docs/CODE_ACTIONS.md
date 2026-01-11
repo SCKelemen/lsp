@@ -833,7 +833,7 @@ func NewMyServer() *MyServer {
 }
 
 func (s *MyServer) TextDocumentCodeAction(
-    context *glsp.Context,
+    context *lsp.Context,
     params *protocol.CodeActionParams,
 ) ([]protocol.CodeAction, error) {
     uri := string(params.TextDocument.URI)
@@ -957,7 +957,7 @@ Advertise code action support in initialization:
 
 ```go
 func (s *MyServer) Initialize(
-    context *glsp.Context,
+    context *lsp.Context,
     params *protocol.InitializeParams,
 ) (interface{}, error) {
     capabilities := protocol.ServerCapabilities{

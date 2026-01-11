@@ -704,7 +704,7 @@ func NewMyServer() *MyServer {
 }
 
 func (s *MyServer) TextDocumentFoldingRange(
-    context *glsp.Context,
+    context *lsp.Context,
     params *protocol.FoldingRangeParams,
 ) ([]protocol.FoldingRange, error) {
     uri := string(params.TextDocument.URI)
@@ -765,7 +765,7 @@ Advertise folding range support:
 
 ```go
 func (s *MyServer) Initialize(
-    context *glsp.Context,
+    context *lsp.Context,
     params *protocol.InitializeParams,
 ) (interface{}, error) {
     capabilities := protocol.ServerCapabilities{

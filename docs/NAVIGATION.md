@@ -811,7 +811,7 @@ func NewMyServer(workspace string) *MyServer {
 }
 
 func (s *MyServer) TextDocumentDefinition(
-    context *glsp.Context,
+    context *lsp.Context,
     params *protocol.DefinitionParams,
 ) ([]protocol.Location, error) {
     uri := string(params.TextDocument.URI)
@@ -847,7 +847,7 @@ func (s *MyServer) TextDocumentDefinition(
 }
 
 func (s *MyServer) TextDocumentHover(
-    context *glsp.Context,
+    context *lsp.Context,
     params *protocol.HoverParams,
 ) (*protocol.Hover, error) {
     uri := string(params.TextDocument.URI)
@@ -887,7 +887,7 @@ func (s *MyServer) TextDocumentHover(
 
 ```go
 func (s *MyServer) Initialize(
-    context *glsp.Context,
+    context *lsp.Context,
     params *protocol.InitializeParams,
 ) (interface{}, error) {
     capabilities := protocol.ServerCapabilities{

@@ -397,7 +397,7 @@ diagnostics := registry.ProvideDiagnostics(uri, content)
 ### Using in LSP Server
 ```go
 // Convert at boundaries only
-func (s *Server) TextDocumentDidOpen(ctx *glsp.Context, params *protocol.DidOpenTextDocumentParams) error {
+func (s *Server) TextDocumentDidOpen(ctx *lsp.Context, params *protocol.DidOpenTextDocumentParams) error {
     uri := string(params.TextDocument.URI)
     content := params.TextDocument.Text
 

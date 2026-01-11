@@ -862,7 +862,7 @@ func NewMyServer() *MyServer {
 }
 
 func (s *MyServer) TextDocumentDocumentSymbol(
-    context *glsp.Context,
+    context *lsp.Context,
     params *protocol.DocumentSymbolParams,
 ) ([]interface{}, error) {
     uri := string(params.TextDocument.URI)
@@ -920,7 +920,7 @@ func (s *MyServer) coreToProtocolSymbol(
 
 ```go
 func (s *MyServer) Initialize(
-    context *glsp.Context,
+    context *lsp.Context,
     params *protocol.InitializeParams,
 ) (interface{}, error) {
     capabilities := protocol.ServerCapabilities{

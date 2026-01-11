@@ -114,7 +114,7 @@ type MyServer struct {
 }
 
 func (s *MyServer) TextDocumentDidOpen(
-    context *glsp.Context,
+    context *lsp.Context,
     params *protocol.DidOpenTextDocumentParams,
 ) error {
     // Extract from protocol types
@@ -162,7 +162,7 @@ When working with positions from the client:
 
 ```go
 func (s *MyServer) TextDocumentHover(
-    context *glsp.Context,
+    context *lsp.Context,
     params *protocol.HoverParams,
 ) (*protocol.Hover, error) {
     uri := string(params.TextDocument.URI)
@@ -277,7 +277,7 @@ func (s *Server) validateCore(uri string, content string, pos core.Position) []c
 }
 
 // Handler converts at boundary
-func (s *Server) TextDocumentHandler(ctx *glsp.Context, params *protocol.TextDocumentParams) error {
+func (s *Server) TextDocumentHandler(ctx *lsp.Context, params *protocol.TextDocumentParams) error {
     uri := string(params.TextDocument.URI)
     content := s.documents.GetContent(uri)
     corePos := adapter.ProtocolToCorePosition(params.Position, content)

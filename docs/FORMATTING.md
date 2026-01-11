@@ -709,7 +709,7 @@ func NewMyServer() *MyServer {
 }
 
 func (s *MyServer) TextDocumentFormatting(
-    context *glsp.Context,
+    context *lsp.Context,
     params *protocol.DocumentFormattingParams,
 ) ([]protocol.TextEdit, error) {
     uri := string(params.TextDocument.URI)
@@ -744,7 +744,7 @@ func (s *MyServer) TextDocumentFormatting(
 }
 
 func (s *MyServer) TextDocumentRangeFormatting(
-    context *glsp.Context,
+    context *lsp.Context,
     params *protocol.DocumentRangeFormattingParams,
 ) ([]protocol.TextEdit, error) {
     uri := string(params.TextDocument.URI)
@@ -784,7 +784,7 @@ func (s *MyServer) TextDocumentRangeFormatting(
 
 ```go
 func (s *MyServer) Initialize(
-    context *glsp.Context,
+    context *lsp.Context,
     params *protocol.InitializeParams,
 ) (interface{}, error) {
     capabilities := protocol.ServerCapabilities{
