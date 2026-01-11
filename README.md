@@ -1,22 +1,66 @@
 # LSP - Language Server Protocol Library for Go
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-
 A Go library for implementing Language Server Protocol (LSP) servers with protocol-agnostic core types optimized for CLI tools and server implementations.
-
-**Forked from [tliron/glsp](https://github.com/tliron/glsp)** with major architectural improvements.
-
-**LSP Specification References:**
-- [LSP 3.16 Specification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/)
-- [LSP 3.17 Specification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/)
 
 ## Key Features
 
-- **Protocol-Agnostic Core Types**: Work with UTF-8 byte offsets naturally in Go (see [Position spec](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/#position))
+- **Protocol-Agnostic Core Types**: Work with UTF-8 byte offsets naturally in Go
 - **CLI-First Design**: Use LSP data structures in CLI tools without protocol overhead
 - **Reusable Providers**: Write business logic once, use in both CLI and LSP server
 - **Automatic UTF-16 Conversion**: Adapters handle protocol conversion at boundaries per LSP spec requirements
-- **Full LSP Support**: Implements LSP 3.16 and 3.17
+- **Full LSP Support**: Implements LSP 3.16, 3.17, and 3.18
+
+## LSP Primer: Editor Features → LSP Capabilities
+
+If you're familiar with VS Code but new to LSP servers, here's how editor features map to LSP capabilities:
+
+### Code Intelligence
+
+| You Know This As... | LSP Feature | What It Does |
+|---------------------|-------------|--------------|
+| Red/yellow squiggles under code | **Diagnostics** (`textDocument/publishDiagnostics`) | Show errors, warnings, and hints |
+| Lightbulb with quick fixes | **Code Actions** (`textDocument/codeAction`) | Provide quick fixes and refactorings |
+| Auto-complete dropdown | **Completion** (`textDocument/completion`) | Suggest code completions |
+| Gray ghost text suggestions | **Inline Completions** (`textDocument/inlineCompletion`) | AI-powered inline code suggestions |
+| Parameter hints `(paramName: ...)` | **Signature Help** (`textDocument/signatureHelp`) | Show function parameters while typing |
+| Type hints `x: number` | **Inlay Hints** (`textDocument/inlayHint`) | Show inferred types and parameter names |
+
+### Navigation
+
+| You Know This As... | LSP Feature | What It Does |
+|---------------------|-------------|--------------|
+| Ctrl+Click / F12 to jump to definition | **Go to Definition** (`textDocument/definition`) | Jump to where something is defined |
+| Find all references | **References** (`textDocument/references`) | Find all uses of a symbol |
+| Hover tooltip with docs | **Hover** (`textDocument/hover`) | Show documentation on hover |
+| Breadcrumbs / outline view | **Document Symbols** (`textDocument/documentSymbol`) | Show file structure |
+| File symbol search (Ctrl+Shift+O) | **Document Symbols** | Quick navigation within file |
+| Workspace symbol search (Ctrl+T) | **Workspace Symbols** (`workspace/symbol`) | Search symbols across workspace |
+
+### Editing
+
+| You Know This As... | LSP Feature | What It Does |
+|---------------------|-------------|--------------|
+| Format Document | **Formatting** (`textDocument/formatting`) | Auto-format code |
+| Format Selection | **Range Formatting** (`textDocument/rangeFormatting`) | Format selected code |
+| Rename Symbol (F2) | **Rename** (`textDocument/rename`) | Rename across all files |
+| Fold/unfold code regions | **Folding Range** (`textDocument/foldingRange`) | Define collapsible regions |
+| Color picker on `#FF0000` | **Document Color** (`textDocument/documentColor`) | Show color decorators |
+
+### Advanced Features
+
+| You Know This As... | LSP Feature | What It Does |
+|---------------------|-------------|--------------|
+| Syntax highlighting (semantic) | **Semantic Tokens** (`textDocument/semanticTokens`) | Enhanced syntax coloring |
+| Code lenses (clickable hints above code) | **Code Lens** (`textDocument/codeLens`) | Inline actionable commands |
+| Smart selection expansion | **Selection Range** (`textDocument/selectionRange`) | Expand/shrink selection intelligently |
+
+**Not sure what to implement?** Start with:
+1. **Diagnostics** - Show errors and warnings
+2. **Completion** - Basic auto-complete
+3. **Hover** - Show documentation
+4. **Go to Definition** - Jump to definitions
+
+These four features provide 80% of the value with 20% of the effort.
 
 ## Quick Start
 
@@ -317,28 +361,17 @@ go test ./adapter/... -v
 go build ./examples/...
 ```
 
-## Projects Using This Fork
-
-This is a personal fork with significant architectural changes. For projects using the original library, see [tliron/glsp](https://github.com/tliron/glsp).
-
-## Migration from Original GLSP
-
-If you're using the original tliron/glsp and want to use core types:
-
-1. Extract business logic from handlers
-2. Convert to use core types with UTF-8 offsets
-3. Add adapter conversions at handler boundaries
-4. Store document content for position conversions
-
-See [CORE_TYPES.md](CORE_TYPES.md) for detailed migration guide.
-
-## Contributing
-
-This is a personal fork. For contributions to the original library, see [tliron/glsp](https://github.com/tliron/glsp).
-
 ## License
 
-Apache 2.0 (same as original)
+BearWare 1.0
+
+Copyright (c) 2025 Samuel Kelemen
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## Attribution
 
@@ -350,3 +383,10 @@ Major architectural improvements in this fork:
 - Added provider interfaces for reusable business logic
 - Comprehensive documentation and examples for CLI and server usage
 - Document manager for stateful document tracking
+- Full support for LSP 3.16, 3.17, and 3.18
+
+## References
+
+- [LSP 3.16 Specification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/)
+- [LSP 3.17 Specification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/)
+- [LSP 3.18 Specification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.18/specification/)
