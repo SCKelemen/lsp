@@ -40,7 +40,7 @@ Protocol-agnostic types using UTF-8 byte offsets:
 - **Diagnostic**: Error/warning with range, severity, code, etc. ([LSP Spec](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/#diagnostic))
 - **DocumentManager**: Utility for managing documents in memory
 
-### `adapter_3_16/` and `adapter_3_17/`
+### `adapter/` and `adapter_3_17/`
 Convert between core types (UTF-8) and protocol types (UTF-16):
 - Position conversions (UTF-8 ↔ UTF-16 code units)
 - Range conversions
@@ -103,9 +103,9 @@ LSP server handlers convert at the boundaries:
 ```go
 import (
     "github.com/SCKelemen/lsp"
-    "github.com/SCKelemen/lsp/adapter_3_16"
+    "github.com/SCKelemen/lsp/adapter"
     "github.com/SCKelemen/lsp/core"
-    protocol "github.com/SCKelemen/lsp/protocol_3_16"
+    protocol "github.com/SCKelemen/lsp/protocol"
 )
 
 type MyServer struct {
@@ -128,7 +128,7 @@ func (s *MyServer) TextDocumentDidOpen(
     coreDiagnostics := s.validateDocument(uri, content)
 
     // Convert back to protocol types
-    protocolDiags := adapter_3_16.CoreToProtocolDiagnostics(
+    protocolDiags := adapter.CoreToProtocolDiagnostics(
         coreDiagnostics,
         content,
     )
@@ -168,7 +168,7 @@ func (s *MyServer) TextDocumentHover(
     content := s.documents.GetContent(uri)
 
     // Convert protocol position (UTF-16) to core position (UTF-8)
-    corePos := adapter_3_16.ProtocolToCorePosition(params.Position, content)
+    corePos := adapter.ProtocolToCorePosition(params.Position, content)
 
     // Business logic with UTF-8 offsets
     hoverInfo := s.getHoverInfo(uri, content, corePos)
@@ -177,7 +177,7 @@ func (s *MyServer) TextDocumentHover(
     }
 
     // Convert range back to protocol
-    protocolRange := adapter_3_16.CoreToProtocolRange(hoverInfo.Range, content)
+    protocolRange := adapter.CoreToProtocolRange(hoverInfo.Range, content)
 
     return &protocol.Hover{
         Contents: hoverInfo.Contents,
@@ -211,7 +211,7 @@ When a position lands in the middle of a multi-byte character, conversions round
 content := "hello 你 world"  // 你 is bytes 6-8
 
 // If UTF-16 offset 7 (middle of 你) is converted to UTF-8:
-pos := adapter_3_16.ProtocolToCorePosition(
+pos := adapter.ProtocolToCorePosition(
     protocol.Position{Line: 0, Character: 7},
     content,
 )
@@ -279,10 +279,10 @@ func (s *Server) validateCore(uri string, content string, pos core.Position) []c
 func (s *Server) TextDocumentHandler(ctx *glsp.Context, params *protocol.TextDocumentParams) error {
     uri := string(params.TextDocument.URI)
     content := s.documents.GetContent(uri)
-    corePos := adapter_3_16.ProtocolToCorePosition(params.Position, content)
+    corePos := adapter.ProtocolToCorePosition(params.Position, content)
 
     coreDiags := s.validateCore(uri, content, corePos)
-    protocolDiags := adapter_3_16.CoreToProtocolDiagnostics(coreDiags, content)
+    protocolDiags := adapter.CoreToProtocolDiagnostics(coreDiags, content)
 
     // Send to client...
 }
@@ -296,5 +296,5 @@ See `examples/core_handler_example.go` for complete working examples.
 
 All core types and adapters include comprehensive tests:
 - `core/encoding_test.go`: UTF-8/UTF-16 conversion tests
-- `adapter_3_16/position_test.go`: Position and range conversion tests
+- `adapter/position_test.go`: Position and range conversion tests
 - Round-trip tests ensure conversion accuracy

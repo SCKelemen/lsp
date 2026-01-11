@@ -807,9 +807,9 @@ actions := registry.ProvideCodeFixes(ctx)
 ```go
 import (
     "github.com/SCKelemen/lsp"
-    "github.com/SCKelemen/lsp/adapter_3_16"
+    "github.com/SCKelemen/lsp/adapter"
     "github.com/SCKelemen/lsp/core"
-    protocol "github.com/SCKelemen/lsp/protocol_3_16"
+    protocol "github.com/SCKelemen/lsp/protocol"
 )
 
 type MyServer struct {
@@ -844,10 +844,10 @@ func (s *MyServer) TextDocumentCodeAction(
     }
 
     // Convert protocol range to core range (UTF-16 to UTF-8)
-    coreRange := adapter_3_16.ProtocolToCoreRange(params.Range, content)
+    coreRange := adapter.ProtocolToCoreRange(params.Range, content)
 
     // Convert protocol diagnostics to core diagnostics
-    coreDiags := adapter_3_16.ProtocolToCoreDiagnostics(params.Context.Diagnostics, content)
+    coreDiags := adapter.ProtocolToCoreDiagnostics(params.Context.Diagnostics, content)
 
     // Convert requested kinds
     var only []core.CodeActionKind
@@ -902,7 +902,7 @@ func (s *MyServer) coreToProtocolCodeAction(
 
     // Convert diagnostics
     if len(action.Diagnostics) > 0 {
-        result.Diagnostics = adapter_3_16.CoreToProtocolDiagnostics(
+        result.Diagnostics = adapter.CoreToProtocolDiagnostics(
             action.Diagnostics,
             content,
         )
@@ -939,7 +939,7 @@ func (s *MyServer) coreToProtocolWorkspaceEdit(
             var protocolEdits []protocol.TextEdit
             for _, e := range edits {
                 protocolEdits = append(protocolEdits, protocol.TextEdit{
-                    Range:   adapter_3_16.CoreToProtocolRange(e.Range, content),
+                    Range:   adapter.CoreToProtocolRange(e.Range, content),
                     NewText: e.NewText,
                 })
             }

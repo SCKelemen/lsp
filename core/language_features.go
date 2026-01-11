@@ -285,6 +285,10 @@ type Command struct {
 	// Title is the title of the command.
 	Title string
 
+	// Tooltip is an optional tooltip when hovering over the command.
+	// @since 3.18.0
+	Tooltip string
+
 	// Command is the identifier of the command to execute.
 	Command string
 
@@ -386,4 +390,58 @@ type InlayHint struct {
 
 	// Data is arbitrary data preserved between textDocument/inlayHint and inlayHint/resolve.
 	Data interface{}
+}
+
+// SelectionRange represents a range that can be selected in a text document.
+// Selection ranges allow for smart expand/shrink selection functionality.
+// Uses UTF-8 byte offsets for the range.
+type SelectionRange struct {
+	// Range is the range of this selection range.
+	Range Range
+
+	// Parent is the parent selection range containing this range.
+	// This forms a hierarchy of selection ranges from narrow to broad.
+	Parent *SelectionRange
+}
+
+// Color represents an RGBA color value.
+type Color struct {
+	// Red component in the range [0-1].
+	Red float64
+
+	// Green component in the range [0-1].
+	Green float64
+
+	// Blue component in the range [0-1].
+	Blue float64
+
+	// Alpha component in the range [0-1].
+	Alpha float64
+}
+
+// ColorInformation represents a color reference found in a document.
+// Uses UTF-8 byte offsets for the range.
+type ColorInformation struct {
+	// Range is the range in the document where this color appears.
+	Range Range
+
+	// Color is the actual RGBA color value.
+	Color Color
+}
+
+// ColorPresentation represents how a color can be represented as text.
+// For example, a color could be presented as "#FF0000", "rgb(255, 0, 0)",
+// or "red" depending on the context.
+type ColorPresentation struct {
+	// Label is the label of this color presentation.
+	// This is what will be shown in the color picker.
+	Label string
+
+	// TextEdit is an optional edit to apply when selecting this presentation.
+	// If not provided, the label is used as the edit text.
+	TextEdit *TextEdit
+
+	// AdditionalTextEdits are optional additional edits that are applied
+	// when selecting this color presentation.
+	AdditionalTextEdits []TextEdit
 }

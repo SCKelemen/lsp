@@ -238,10 +238,77 @@ type CompletionList struct {
 	IsIncomplete bool `json:"isIncomplete"`
 
 	/**
+	 * In many cases the items of an actual completion result share the same
+	 * value for properties like `commitCharacters` or the range of a text
+	 * edit. A completion list can therefore define item defaults which will
+	 * be used if a completion item itself doesn't specify the value.
+	 *
+	 * If a completion list specifies a default value and a completion item
+	 * also specifies a corresponding value the one from the item is used.
+	 *
+	 * @since 3.17.0
+	 */
+	ItemDefaults *struct {
+		/**
+		 * A default commit character set.
+		 */
+		CommitCharacters []string `json:"commitCharacters,omitempty"`
+
+		/**
+		 * A default edit range.
+		 */
+		EditRange any `json:"editRange,omitempty"` // Range | { insert: Range; replace: Range }
+
+		/**
+		 * A default insert text format.
+		 */
+		InsertTextFormat *InsertTextFormat `json:"insertTextFormat,omitempty"`
+
+		/**
+		 * A default insert text mode.
+		 */
+		InsertTextMode *InsertTextMode `json:"insertTextMode,omitempty"`
+
+		/**
+		 * A default data value.
+		 */
+		Data any `json:"data,omitempty"`
+	} `json:"itemDefaults,omitempty"`
+
+	/**
 	 * The completion items.
 	 */
 	Items []CompletionItem `json:"items"`
+
+	/**
+	 * Defines how the completion list's item defaults and the completion items
+	 * themselves should be combined.
+	 *
+	 * @since 3.18.0
+	 */
+	ApplyKind *CompletionItemApplyKind `json:"applyKind,omitempty"`
 }
+
+/**
+ * Defines how completion items should be combined with item defaults.
+ *
+ * @since 3.18.0
+ */
+type CompletionItemApplyKind Integer
+
+const (
+	/**
+	 * The client will use the item from the list and ignore the defaults.
+	 * This is the behavior before 3.17.0.
+	 */
+	CompletionItemApplyKindReplace = CompletionItemApplyKind(1)
+
+	/**
+	 * The client will use the defaults from the list and merge them with the item.
+	 * If the item and the defaults specify the same property, the item wins.
+	 */
+	CompletionItemApplyKindMerge = CompletionItemApplyKind(2)
+)
 
 /**
  * Defines whether the insert text in a completion item should be interpreted as
@@ -1832,6 +1899,30 @@ type CodeActionOptions struct {
 	 * @since 3.16.0
 	 */
 	ResolveProvider *bool `json:"resolveProvider,omitempty"`
+
+	/**
+	 * Static documentation for a class of code actions.
+	 *
+	 * @since 3.18.0
+	 */
+	Documentation []CodeActionKindDocumentation `json:"documentation,omitempty"`
+}
+
+/**
+ * Documentation for a class of code actions.
+ *
+ * @since 3.18.0
+ */
+type CodeActionKindDocumentation struct {
+	/**
+	 * The kind of the code action being documented.
+	 */
+	Kind CodeActionKind `json:"kind"`
+
+	/**
+	 * The documentation for this code action kind.
+	 */
+	Command Command `json:"command"`
 }
 
 type CodeActionRegistrationOptions struct {
@@ -2074,6 +2165,18 @@ type CodeLensClientCapabilities struct {
 	 * Whether code lens supports dynamic registration.
 	 */
 	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+
+	/**
+	 * Indicates which properties a client can resolve lazily on a code lens.
+	 *
+	 * @since 3.18.0
+	 */
+	ResolveSupport *struct {
+		/**
+		 * The properties that a client can resolve lazily.
+		 */
+		Properties []string `json:"properties"`
+	} `json:"resolveSupport,omitempty"`
 }
 
 type CodeLensOptions struct {
@@ -2472,6 +2575,30 @@ type DocumentRangeFormattingParams struct {
 	Options FormattingOptions `json:"options"`
 }
 
+/**
+ * Parameters for the document ranges formatting request.
+ *
+ * @since 3.18.0
+ */
+type DocumentRangesFormattingParams struct {
+	WorkDoneProgressParams
+
+	/**
+	 * The document to format.
+	 */
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+
+	/**
+	 * The ranges to format
+	 */
+	Ranges []Range `json:"ranges"`
+
+	/**
+	 * The format options
+	 */
+	Options FormattingOptions `json:"options"`
+}
+
 // https://microsoft.github.io/language-server-protocol/specifications/specification-3-16#textDocument_onTypeFormatting
 
 type DocumentOnTypeFormattingClientCapabilities struct {
@@ -2638,6 +2765,13 @@ type FoldingRangeClientCapabilities struct {
 	 * properties in a FoldingRange.
 	 */
 	LineFoldingOnly *bool `json:"lineFoldingOnly,omitempty"`
+
+	/**
+	 * Whether the client supports sending a refresh request for folding ranges.
+	 *
+	 * @since 3.18.0
+	 */
+	RefreshSupport *bool `json:"refreshSupport,omitempty"`
 }
 
 type FoldingRangeOptions struct {
@@ -3428,4 +3562,147 @@ type Moniker struct {
 	 * The moniker kind if known.
 	 */
 	Kind *MonikerKind `json:"kind,omitempty"`
+}
+
+// LSP 3.18 Inline Completion Support
+// https://microsoft.github.io/language-server-protocol/specifications/specification-3-18#textDocument_inlineCompletion
+
+/**
+ * Defines how an inline completion was triggered.
+ *
+ * @since 3.18.0
+ */
+type InlineCompletionTriggerKind UInteger
+
+const (
+	/**
+	 * Completion was triggered explicitly by a user gesture.
+	 */
+	InlineCompletionTriggerKindInvoked = InlineCompletionTriggerKind(0)
+
+	/**
+	 * Completion was triggered automatically while editing.
+	 */
+	InlineCompletionTriggerKindAutomatic = InlineCompletionTriggerKind(1)
+)
+
+/**
+ * Provides information about the context in which an inline completion was requested.
+ *
+ * @since 3.18.0
+ */
+type InlineCompletionContext struct {
+	/**
+	 * Describes how the inline completion was triggered.
+	 */
+	TriggerKind InlineCompletionTriggerKind `json:"triggerKind"`
+
+	/**
+	 * Provides information about the currently selected item in the autocomplete widget if it is visible.
+	 */
+	SelectedCompletionInfo *SelectedCompletionInfo `json:"selectedCompletionInfo,omitempty"`
+}
+
+/**
+ * Describes the currently selected completion item.
+ *
+ * @since 3.18.0
+ */
+type SelectedCompletionInfo struct {
+	/**
+	 * The range that will be replaced if this completion item is accepted.
+	 */
+	Range Range `json:"range"`
+
+	/**
+	 * The text the range will be replaced with if this completion is accepted.
+	 */
+	Text string `json:"text"`
+}
+
+/**
+ * Inline completion parameters.
+ *
+ * @since 3.18.0
+ */
+type InlineCompletionParams struct {
+	TextDocumentPositionParams
+
+	/**
+	 * Additional information about the context in which inline completions were requested.
+	 */
+	Context InlineCompletionContext `json:"context"`
+}
+
+/**
+ * An inline completion item represents an inline text that is being proposed.
+ *
+ * @since 3.18.0
+ */
+type InlineCompletionItem struct {
+	/**
+	 * The text to insert.
+	 */
+	InsertText string `json:"insertText"`
+
+	/**
+	 * A text that is used to decide if this inline completion should be shown.
+	 * When falsy the InlineCompletionItem::insertText is used.
+	 */
+	FilterText *string `json:"filterText,omitempty"`
+
+	/**
+	 * The range to replace.
+	 * Must begin and end on the same line.
+	 */
+	Range any `json:"range,omitempty"` // Range
+
+	/**
+	 * An optional command to execute after inserting the inline completion.
+	 */
+	Command *Command `json:"command,omitempty"`
+}
+
+/**
+ * Represents a collection of inline completion items.
+ *
+ * @since 3.18.0
+ */
+type InlineCompletionList struct {
+	/**
+	 * The inline completion items.
+	 */
+	Items []InlineCompletionItem `json:"items"`
+}
+
+/**
+ * Inline completion client capabilities.
+ *
+ * @since 3.18.0
+ */
+type InlineCompletionClientCapabilities struct {
+	/**
+	 * Whether inline completion supports dynamic registration.
+	 */
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+}
+
+/**
+ * Inline completion options.
+ *
+ * @since 3.18.0
+ */
+type InlineCompletionOptions struct {
+	WorkDoneProgressOptions
+}
+
+/**
+ * Inline completion registration options.
+ *
+ * @since 3.18.0
+ */
+type InlineCompletionRegistrationOptions struct {
+	InlineCompletionOptions
+	TextDocumentRegistrationOptions
+	StaticRegistrationOptions
 }

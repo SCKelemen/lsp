@@ -71,9 +71,9 @@ fixes := registry.ProvideCodeFixes(ctx)
 ```go
 import (
     "github.com/SCKelemen/lsp"
-    "github.com/SCKelemen/lsp/adapter_3_16"
+    "github.com/SCKelemen/lsp/adapter"
     "github.com/SCKelemen/lsp/core"
-    protocol "github.com/SCKelemen/lsp/protocol_3_16"
+    protocol "github.com/SCKelemen/lsp/protocol"
 )
 
 func (s *Server) TextDocumentDidOpen(
@@ -87,7 +87,7 @@ func (s *Server) TextDocumentDidOpen(
     diagnostics := s.validate(uri, content)
 
     // Convert to protocol at boundary
-    protocolDiags := adapter_3_16.CoreToProtocolDiagnostics(diagnostics, content)
+    protocolDiags := adapter.CoreToProtocolDiagnostics(diagnostics, content)
 
     // Send to client
     context.Notify(...)
@@ -182,7 +182,7 @@ content := "hello 世界"  // 世界 is 3 bytes in UTF-8, 1 code unit in UTF-16
 pos := core.ByteOffsetToPosition(content, 8)  // Natural UTF-8 offset
 
 // Protocol types: need conversion
-protocolPos := adapter_3_16.CoreToProtocolPosition(pos, content)
+protocolPos := adapter.CoreToProtocolPosition(pos, content)
 ```
 
 ## Core Packages
@@ -195,7 +195,7 @@ Protocol-agnostic types using UTF-8:
 - **document.go**: DocumentManager for managing documents in memory
 - **encoding.go**: UTF-8 ↔ UTF-16 conversion utilities
 
-### `adapter_3_16/` and `adapter_3_17/`
+### `adapter/` and `adapter_3_17/`
 Convert between core (UTF-8) and protocol (UTF-16) types
 
 ### `examples/`
@@ -232,7 +232,7 @@ package main
 
 import (
 	"github.com/SCKelemen/lsp"
-	protocol "github.com/SCKelemen/lsp/protocol_3_16"
+	protocol "github.com/SCKelemen/lsp/protocol"
 	"github.com/SCKelemen/lsp/server"
 	"github.com/tliron/commonlog"
 	_ "github.com/tliron/commonlog/simple"
@@ -305,7 +305,7 @@ func setTrace(context *glsp.Context, params *protocol.SetTraceParams) error {
 
 ```bash
 # Run all tests
-go test ./core/... ./adapter_3_16/... ./adapter_3_17/...
+go test ./core/... ./adapter/... ./adapter_3_17/...
 
 # Test specific package
 go test ./core/... -v

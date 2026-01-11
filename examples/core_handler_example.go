@@ -2,9 +2,9 @@ package examples
 
 import (
 	"github.com/SCKelemen/lsp"
-	"github.com/SCKelemen/lsp/adapter_3_16"
+	"github.com/SCKelemen/lsp/adapter"
 	"github.com/SCKelemen/lsp/core"
-	protocol "github.com/SCKelemen/lsp/protocol_3_16"
+	protocol "github.com/SCKelemen/lsp/protocol"
 )
 
 // This example shows how to use core types in your business logic

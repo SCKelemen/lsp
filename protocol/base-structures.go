@@ -328,6 +328,13 @@ type Command struct {
 	Title string `json:"title"`
 
 	/**
+	 * An optional tooltip when hovering over the command.
+	 *
+	 * @since 3.18.0
+	 */
+	Tooltip *string `json:"tooltip,omitempty"`
+
+	/**
 	 * The identifier of the actual command handler.
 	 */
 	Command string `json:"command"`

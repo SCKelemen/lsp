@@ -120,8 +120,8 @@ This document shows all Language Server Protocol capabilities and their support 
 
 | Capability | Status | Usage | Core Type | Provider Interface | Notes |
 |------------|--------|-------|-----------|-------------------|-------|
-| `textDocument/documentColor` | 📋 | Both | - | - | Color decorators |
-| `textDocument/colorPresentation` | 📋 | Both | - | - | Color picker formats |
+| `textDocument/documentColor` | ✅ | Both | `ColorInformation`, `Color` | `DocumentColorProvider` | Color decorators |
+| `textDocument/colorPresentation` | ✅ | Both | `ColorPresentation` | `ColorPresentationProvider` | Color picker formats |
 
 ### Formatting
 
@@ -148,7 +148,7 @@ This document shows all Language Server Protocol capabilities and their support 
 
 | Capability | Status | Usage | Core Type | Provider Interface | Notes |
 |------------|--------|-------|-----------|-------------------|-------|
-| `textDocument/selectionRange` | 📋 | Both | - | - | Smart selection expansion |
+| `textDocument/selectionRange` | ✅ | Both | `SelectionRange` | `SelectionRangeProvider` | Smart selection expansion |
 
 ### Call Hierarchy
 
@@ -191,13 +191,31 @@ This document shows all Language Server Protocol capabilities and their support 
 | Capability | Status | Usage | Core Type | Provider Interface | Notes |
 |------------|--------|-------|-----------|-------------------|-------|
 | `textDocument/inlayHint` | ✅ | Both | `InlayHint`, `InlayHintKind` | `InlayHintsProvider` | Inline hints (types, params) |
-| `inlayHint/resolve` | 🔧 | LSP | `InlayHint` | - | Resolve inlay hint details |
+| `inlayHint/resolve` | ✅ | Both | `InlayHint` | `InlayHintResolveProvider` | Resolve inlay hint details |
 
 ### Inline Value
 
 | Capability | Status | Usage | Core Type | Provider Interface | Notes |
 |------------|--------|-------|-----------|-------------------|-------|
 | `textDocument/inlineValue` | 📋 | LSP | - | - | Inline values during debug |
+
+---
+
+## LSP 3.18 Features
+
+The following features are from LSP 3.18 (unreleased) specification:
+
+| Capability | Status | Usage | Core Type | Provider Interface | Notes |
+|------------|--------|-------|-----------|-------------------|-------|
+| `textDocument/inlineCompletion` | ✅ | Both | `InlineCompletionItem`, `InlineCompletionList` | `InlineCompletionProvider` | AI-powered inline code suggestions |
+| `textDocument/rangesFormatting` | ✅ | Both | `TextEdit`, `FormattingOptions` | `RangesFormattingProvider` | Format multiple ranges at once |
+| `textDocument/foldingRange` (refresh) | ✅ | LSP | - | - | Folding range refresh support |
+| Code Action Kind Documentation | ✅ | LSP | `CodeActionKindDocumentation` | - | Documentation for code action kinds |
+| Command Tooltip | ✅ | Both | `Command.Tooltip` | - | Tooltips for commands |
+| Null activeParameter | ✅ | Both | `SignatureHelp`, `SignatureInformation` | - | Support for null activeParameter |
+| Debug Message Kind | ✅ | LSP | `MessageTypeDebug` | - | Debug message type for logging |
+| Code Lens Resolve Properties | ✅ | LSP | - | - | Client can enumerate resolvable properties |
+| CompletionList.applyKind | ✅ | LSP | `CompletionItemApplyKind` | - | How to merge itemDefaults with items |
 
 ---
 
@@ -235,14 +253,14 @@ This document shows all Language Server Protocol capabilities and their support 
 ## Summary Statistics
 
 ### Implementation Status
-- ✅ **Fully Supported with Core Types**: 33 capabilities
-- 🔧 **Protocol Types Only**: 15 capabilities
-- 📋 **Planned**: 12 capabilities
+- ✅ **Fully Supported with Core Types**: 41 capabilities
+- 🔧 **Protocol Types Only**: 19 capabilities (including 5 LSP 3.18 features)
+- 📋 **Planned**: 9 capabilities
 - ❌ **Not Implemented**: 0 capabilities
 
 ### Usage Breakdown
-- **CLI + LSP (Both)**: 33 capabilities
-- **LSP Only**: 15 capabilities
+- **CLI + LSP (Both)**: 37 capabilities
+- **LSP Only**: 23 capabilities (including LSP 3.18 features)
 - **CLI Only**: 0 capabilities
 
 ### Core Types Available
@@ -268,6 +286,12 @@ This document shows all Language Server Protocol capabilities and their support 
 - ✅ `DocumentLink` (clickable URIs in documents)
 - ✅ `WorkspaceSymbol` (workspace-wide symbol search)
 - ✅ `ReferenceContext` (reference search options)
+- ✅ `SelectionRange` (smart expand/shrink selection)
+- ✅ `Color` (RGBA color values)
+- ✅ `ColorInformation` (color references in documents)
+- ✅ `ColorPresentation` (textual color representations)
+- ✅ `InlineCompletionItem` (AI-powered suggestions)
+- ✅ `InlineCompletionList` (collection of inline suggestions)
 
 ### Provider Interfaces Available
 - ✅ `DiagnosticProvider`
@@ -291,6 +315,12 @@ This document shows all Language Server Protocol capabilities and their support 
 - ✅ `DocumentLinkProvider`
 - ✅ `DocumentLinkResolveProvider`
 - ✅ `WorkspaceSymbolProvider`
+- ✅ `SelectionRangeProvider`
+- ✅ `DocumentColorProvider`
+- ✅ `ColorPresentationProvider`
+- ✅ `InlayHintResolveProvider`
+- ✅ `InlineCompletionProvider`
+- ✅ `RangesFormattingProvider`
 
 ---
 
@@ -301,10 +331,12 @@ This document shows all Language Server Protocol capabilities and their support 
 #### For CLI Tools (No LSP Server Needed)
 - **Diagnostics**: Find errors, warnings in files
 - **Code Fixes**: Generate fixes for diagnostics
-- **Formatting**: Format entire documents or ranges
-- **Completion**: Generate code completion suggestions
+- **Formatting**: Format entire documents or ranges (including multiple ranges)
+- **Completion**: Generate code completion suggestions (including inline completions)
 - **Symbol Navigation**: Build symbol trees, find definitions
 - **Folding**: Detect foldable regions
+- **Selection Range**: Smart expand/shrink selection
+- **Color Support**: Detect and present colors in documents
 - **Document Management**: Track document state with `DocumentManager`
 
 #### For LSP Servers
@@ -326,8 +358,6 @@ This document shows all Language Server Protocol capabilities and their support 
 ### 📋 Planned Features
 
 The following features are planned for future releases:
-- Color decorators
-- Selection range expansion
 - Call hierarchy
 - Type hierarchy
 - Semantic tokens
@@ -335,6 +365,20 @@ The following features are planned for future releases:
 - Linked editing range
 
 These will follow the same pattern: core types with UTF-8 offsets, provider interfaces, and adapters for protocol conversion.
+
+### 🚀 LSP 3.18 Support
+
+This library includes support for LSP 3.18 (unreleased) features:
+- **Inline Completions**: AI-powered code suggestions that appear inline as ghost text
+- **Multiple Range Formatting**: Format multiple ranges in a single request for better performance
+- **Folding Range Refresh**: Servers can request clients to refresh folding ranges
+- **Code Action Kind Documentation**: Provide documentation for code action kinds
+- **Command Tooltips**: Display tooltips when hovering over commands
+- **Debug Message Kind**: New message type for debug-level logging
+- **Code Lens Resolve Properties**: Clients can enumerate which properties can be lazily resolved
+- **CompletionList.applyKind**: Control how item defaults are merged with individual items
+
+Since these features are from an unreleased specification, they should be used with caution in production environments.
 
 ---
 
@@ -361,7 +405,7 @@ func (s *Server) TextDocumentDidOpen(ctx *glsp.Context, params *protocol.DidOpen
     diagnostics := s.registry.ProvideDiagnostics(uri, content)
 
     // Convert to protocol at boundary
-    protocolDiags := adapter_3_16.CoreToProtocolDiagnostics(diagnostics, content)
+    protocolDiags := adapter.CoreToProtocolDiagnostics(diagnostics, content)
 
     // Send to client
     ctx.Notify(...)

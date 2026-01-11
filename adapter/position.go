@@ -11,7 +11,7 @@ package adapter_3_16
 
 import (
 	"github.com/SCKelemen/lsp/core"
-	protocol "github.com/SCKelemen/lsp/protocol_3_16"
+	protocol "github.com/SCKelemen/lsp/protocol"
 )
 
 // CoreToProtocolPosition converts a core.Position (UTF-8) to a protocol Position (UTF-16).

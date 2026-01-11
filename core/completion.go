@@ -276,3 +276,75 @@ type CodeLensResolveProvider interface {
 	// ResolveCodeLens resolves additional details for a code lens.
 	ResolveCodeLens(lens CodeLens) CodeLens
 }
+
+// InlineCompletionTriggerKind defines how an inline completion was triggered.
+type InlineCompletionTriggerKind int
+
+const (
+	// InlineCompletionTriggerKindInvoked means inline completion was explicitly requested.
+	InlineCompletionTriggerKindInvoked InlineCompletionTriggerKind = 0
+	// InlineCompletionTriggerKindAutomatic means inline completion was triggered automatically.
+	InlineCompletionTriggerKindAutomatic InlineCompletionTriggerKind = 1
+)
+
+// InlineCompletionItem represents a single inline completion suggestion.
+// Inline completions are typically used for AI-powered code suggestions
+// that appear as ghost text in the editor.
+type InlineCompletionItem struct {
+	// InsertText is the text to insert.
+	// If omitted, the filterText is used.
+	InsertText string
+
+	// FilterText is used for filtering inline completions.
+	// If omitted, the insertText is used.
+	FilterText string
+
+	// Range is the range to replace (UTF-8 offsets).
+	// If omitted, the current word range is used.
+	Range *Range
+
+	// Command is an optional command to execute after inserting.
+	Command *Command
+}
+
+// InlineCompletionList represents a list of inline completion items.
+type InlineCompletionList struct {
+	// Items are the inline completion items.
+	Items []InlineCompletionItem
+}
+
+// InlineCompletionContext provides context for an inline completion request.
+type InlineCompletionContext struct {
+	// URI is the document URI.
+	URI string
+
+	// Content is the document content.
+	Content string
+
+	// Position is where inline completion was requested (UTF-8 offset).
+	Position Position
+
+	// TriggerKind indicates how inline completion was triggered.
+	TriggerKind InlineCompletionTriggerKind
+
+	// SelectedCompletionInfo contains information about the currently selected item
+	// in the autocomplete widget if it is visible.
+	SelectedCompletionInfo *SelectedCompletionInfo
+}
+
+// SelectedCompletionInfo contains information about a selected completion item.
+type SelectedCompletionInfo struct {
+	// Range is the range that will be replaced (UTF-8 offsets).
+	Range Range
+
+	// Text is the text the range will be replaced with.
+	Text string
+}
+
+// InlineCompletionProvider provides inline completion suggestions.
+// This is typically used for AI-powered code suggestions.
+type InlineCompletionProvider interface {
+	// ProvideInlineCompletions returns inline completion items for the given context.
+	// Returns nil or empty list if no inline completions are available.
+	ProvideInlineCompletions(ctx InlineCompletionContext) *InlineCompletionList
+}

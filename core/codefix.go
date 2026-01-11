@@ -171,6 +171,15 @@ type RangeFormattingProvider interface {
 	ProvideRangeFormatting(uri, content string, r Range, options FormattingOptions) []TextEdit
 }
 
+// RangesFormattingProvider provides formatting for multiple ranges.
+// This is more efficient than formatting each range individually.
+//
+// @since 3.18.0
+type RangesFormattingProvider interface {
+	// ProvideRangesFormatting returns edits to format multiple ranges in the document.
+	ProvideRangesFormatting(uri, content string, ranges []Range, options FormattingOptions) []TextEdit
+}
+
 // DocumentLinkProvider provides document links.
 // Document links are clickable regions in a document that link to URIs, files, or locations.
 type DocumentLinkProvider interface {
@@ -210,4 +219,36 @@ type ReferencesProvider interface {
 	// FindReferences returns all references to the symbol at the given position.
 	// Returns nil or empty slice if no references are found.
 	FindReferences(uri, content string, position Position, context ReferenceContext) []Location
+}
+
+// SelectionRangeProvider provides selection ranges for a document.
+// Selection ranges enable smart expand/shrink selection in editors.
+type SelectionRangeProvider interface {
+	// ProvideSelectionRanges returns selection ranges for the given positions.
+	// Returns nil or empty slice if no selection ranges are available.
+	ProvideSelectionRanges(uri, content string, positions []Position) []SelectionRange
+}
+
+// DocumentColorProvider provides color information for a document.
+// This allows editors to show color decorators and color pickers.
+type DocumentColorProvider interface {
+	// ProvideDocumentColors returns all color references found in the document.
+	// Returns nil or empty slice if no colors are found.
+	ProvideDocumentColors(uri, content string) []ColorInformation
+}
+
+// ColorPresentationProvider provides different textual representations of a color.
+// This is used when the user picks a color to determine how it should be formatted.
+type ColorPresentationProvider interface {
+	// ProvideColorPresentations returns ways to represent a color value as text.
+	// Returns nil or empty slice if no presentations are available.
+	ProvideColorPresentations(uri, content string, color Color, rng Range) []ColorPresentation
+}
+
+// InlayHintResolveProvider resolves additional details for an inlay hint.
+// This allows for lazy resolution of hint properties.
+type InlayHintResolveProvider interface {
+	// ResolveInlayHint resolves additional details for an inlay hint.
+	// This is called when more information is needed about a hint.
+	ResolveInlayHint(hint InlayHint) InlayHint
 }

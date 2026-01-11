@@ -2,7 +2,7 @@ package adapter_3_16
 
 import (
 	"github.com/SCKelemen/lsp/core"
-	protocol "github.com/SCKelemen/lsp/protocol_3_16"
+	protocol "github.com/SCKelemen/lsp/protocol"
 )
 
 // CoreToProtocolFoldingRange converts a core.FoldingRange to a protocol FoldingRange.
@@ -220,6 +220,166 @@ func ProtocolToCoreDocumentSymbols(symbols []protocol.DocumentSymbol, content st
 	result := make([]core.DocumentSymbol, len(symbols))
 	for i, sym := range symbols {
 		result[i] = ProtocolToCoreDocumentSymbol(sym, content)
+	}
+	return result
+}
+
+// CoreToProtocolSelectionRange converts a core.SelectionRange to a protocol SelectionRange.
+func CoreToProtocolSelectionRange(sr core.SelectionRange, content string) protocol.SelectionRange {
+	result := protocol.SelectionRange{
+		Range: CoreToProtocolRange(sr.Range, content),
+	}
+
+	// Convert parent recursively if present
+	if sr.Parent != nil {
+		parent := CoreToProtocolSelectionRange(*sr.Parent, content)
+		result.Parent = &parent
+	}
+
+	return result
+}
+
+// ProtocolToCoreSelectionRange converts a protocol SelectionRange to a core.SelectionRange.
+func ProtocolToCoreSelectionRange(sr protocol.SelectionRange, content string) core.SelectionRange {
+	result := core.SelectionRange{
+		Range: ProtocolToCoreRange(sr.Range, content),
+	}
+
+	// Convert parent recursively if present
+	if sr.Parent != nil {
+		parent := ProtocolToCoreSelectionRange(*sr.Parent, content)
+		result.Parent = &parent
+	}
+
+	return result
+}
+
+// CoreToProtocolSelectionRanges converts a slice of core selection ranges to protocol selection ranges.
+func CoreToProtocolSelectionRanges(ranges []core.SelectionRange, content string) []protocol.SelectionRange {
+	result := make([]protocol.SelectionRange, len(ranges))
+	for i, r := range ranges {
+		result[i] = CoreToProtocolSelectionRange(r, content)
+	}
+	return result
+}
+
+// ProtocolToCoreSelectionRanges converts a slice of protocol selection ranges to core selection ranges.
+func ProtocolToCoreSelectionRanges(ranges []protocol.SelectionRange, content string) []core.SelectionRange {
+	result := make([]core.SelectionRange, len(ranges))
+	for i, r := range ranges {
+		result[i] = ProtocolToCoreSelectionRange(r, content)
+	}
+	return result
+}
+
+// CoreToProtocolColor converts a core.Color to a protocol Color.
+func CoreToProtocolColor(c core.Color) protocol.Color {
+	return protocol.Color{
+		Red:   protocol.Decimal(c.Red),
+		Green: protocol.Decimal(c.Green),
+		Blue:  protocol.Decimal(c.Blue),
+		Alpha: protocol.Decimal(c.Alpha),
+	}
+}
+
+// ProtocolToCoreColor converts a protocol Color to a core.Color.
+func ProtocolToCoreColor(c protocol.Color) core.Color {
+	return core.Color{
+		Red:   float64(c.Red),
+		Green: float64(c.Green),
+		Blue:  float64(c.Blue),
+		Alpha: float64(c.Alpha),
+	}
+}
+
+// CoreToProtocolColorInformation converts a core.ColorInformation to a protocol ColorInformation.
+func CoreToProtocolColorInformation(ci core.ColorInformation, content string) protocol.ColorInformation {
+	return protocol.ColorInformation{
+		Range: CoreToProtocolRange(ci.Range, content),
+		Color: CoreToProtocolColor(ci.Color),
+	}
+}
+
+// ProtocolToCoreColorInformation converts a protocol ColorInformation to a core.ColorInformation.
+func ProtocolToCoreColorInformation(ci protocol.ColorInformation, content string) core.ColorInformation {
+	return core.ColorInformation{
+		Range: ProtocolToCoreRange(ci.Range, content),
+		Color: ProtocolToCoreColor(ci.Color),
+	}
+}
+
+// CoreToProtocolColorInformationList converts a slice of core color information to protocol color information.
+func CoreToProtocolColorInformationList(colors []core.ColorInformation, content string) []protocol.ColorInformation {
+	result := make([]protocol.ColorInformation, len(colors))
+	for i, c := range colors {
+		result[i] = CoreToProtocolColorInformation(c, content)
+	}
+	return result
+}
+
+// ProtocolToCoreColorInformationList converts a slice of protocol color information to core color information.
+func ProtocolToCoreColorInformationList(colors []protocol.ColorInformation, content string) []core.ColorInformation {
+	result := make([]core.ColorInformation, len(colors))
+	for i, c := range colors {
+		result[i] = ProtocolToCoreColorInformation(c, content)
+	}
+	return result
+}
+
+// CoreToProtocolColorPresentation converts a core.ColorPresentation to a protocol ColorPresentation.
+func CoreToProtocolColorPresentation(cp core.ColorPresentation, content string) protocol.ColorPresentation {
+	result := protocol.ColorPresentation{
+		Label: cp.Label,
+	}
+
+	// Convert text edit if present
+	if cp.TextEdit != nil {
+		textEdit := CoreToProtocolTextEdit(*cp.TextEdit, content)
+		result.TextEdit = &textEdit
+	}
+
+	// Convert additional text edits
+	if len(cp.AdditionalTextEdits) > 0 {
+		result.AdditionalTextEdits = CoreToProtocolTextEdits(cp.AdditionalTextEdits, content)
+	}
+
+	return result
+}
+
+// ProtocolToCoreColorPresentation converts a protocol ColorPresentation to a core.ColorPresentation.
+func ProtocolToCoreColorPresentation(cp protocol.ColorPresentation, content string) core.ColorPresentation {
+	result := core.ColorPresentation{
+		Label: cp.Label,
+	}
+
+	// Convert text edit if present
+	if cp.TextEdit != nil {
+		textEdit := ProtocolToCoreTextEdit(*cp.TextEdit, content)
+		result.TextEdit = &textEdit
+	}
+
+	// Convert additional text edits
+	if len(cp.AdditionalTextEdits) > 0 {
+		result.AdditionalTextEdits = ProtocolToCoreTextEdits(cp.AdditionalTextEdits, content)
+	}
+
+	return result
+}
+
+// CoreToProtocolColorPresentations converts a slice of core color presentations to protocol color presentations.
+func CoreToProtocolColorPresentations(presentations []core.ColorPresentation, content string) []protocol.ColorPresentation {
+	result := make([]protocol.ColorPresentation, len(presentations))
+	for i, p := range presentations {
+		result[i] = CoreToProtocolColorPresentation(p, content)
+	}
+	return result
+}
+
+// ProtocolToCoreColorPresentations converts a slice of protocol color presentations to core color presentations.
+func ProtocolToCoreColorPresentations(presentations []protocol.ColorPresentation, content string) []core.ColorPresentation {
+	result := make([]core.ColorPresentation, len(presentations))
+	for i, p := range presentations {
+		result[i] = ProtocolToCoreColorPresentation(p, content)
 	}
 	return result
 }

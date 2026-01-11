@@ -2,7 +2,7 @@ package adapter_3_16
 
 import (
 	"github.com/SCKelemen/lsp/core"
-	protocol "github.com/SCKelemen/lsp/protocol_3_16"
+	protocol "github.com/SCKelemen/lsp/protocol"
 )
 
 // CoreToProtocolCompletionItemKind converts a core completion item kind to protocol.
@@ -226,17 +226,119 @@ func ProtocolToCoreCompletionList(list *protocol.CompletionList, content string)
 
 // Helper functions for Command conversion
 func coreToProtocolCommand(cmd core.Command) *protocol.Command {
-	return &protocol.Command{
+	result := &protocol.Command{
 		Title:     cmd.Title,
 		Command:   cmd.Command,
 		Arguments: cmd.Arguments,
 	}
+
+	// Tooltip (3.18+)
+	if cmd.Tooltip != "" {
+		result.Tooltip = &cmd.Tooltip
+	}
+
+	return result
 }
 
 func protocolToCoreCommand(cmd protocol.Command) core.Command {
-	return core.Command{
+	result := core.Command{
 		Title:     cmd.Title,
 		Command:   cmd.Command,
 		Arguments: cmd.Arguments,
 	}
+
+	// Tooltip (3.18+)
+	if cmd.Tooltip != nil {
+		result.Tooltip = *cmd.Tooltip
+	}
+
+	return result
+}
+
+// CoreToProtocolInlineCompletionItem converts a core inline completion item to protocol.
+func CoreToProtocolInlineCompletionItem(item core.InlineCompletionItem, content string) protocol.InlineCompletionItem {
+	result := protocol.InlineCompletionItem{
+		InsertText: item.InsertText,
+	}
+
+	// Filter text
+	if item.FilterText != "" {
+		result.FilterText = &item.FilterText
+	}
+
+	// Range
+	if item.Range != nil {
+		protocolRange := CoreToProtocolRange(*item.Range, content)
+		result.Range = &protocolRange
+	}
+
+	// Command
+	if item.Command != nil {
+		result.Command = coreToProtocolCommand(*item.Command)
+	}
+
+	return result
+}
+
+// ProtocolToCoreInlineCompletionItem converts a protocol inline completion item to core.
+func ProtocolToCoreInlineCompletionItem(item protocol.InlineCompletionItem, content string) core.InlineCompletionItem {
+	result := core.InlineCompletionItem{
+		InsertText: item.InsertText,
+	}
+
+	// Filter text
+	if item.FilterText != nil {
+		result.FilterText = *item.FilterText
+	}
+
+	// Range
+	if item.Range != nil {
+		switch r := item.Range.(type) {
+		case protocol.Range:
+			coreRange := ProtocolToCoreRange(r, content)
+			result.Range = &coreRange
+		}
+	}
+
+	// Command
+	if item.Command != nil {
+		cmd := protocolToCoreCommand(*item.Command)
+		result.Command = &cmd
+	}
+
+	return result
+}
+
+// CoreToProtocolInlineCompletionList converts a core inline completion list to protocol.
+func CoreToProtocolInlineCompletionList(list *core.InlineCompletionList, content string) *protocol.InlineCompletionList {
+	if list == nil {
+		return nil
+	}
+
+	result := &protocol.InlineCompletionList{
+		Items: make([]protocol.InlineCompletionItem, len(list.Items)),
+	}
+
+	for i, item := range list.Items {
+		result.Items[i] = CoreToProtocolInlineCompletionItem(item, content)
+	}
+
+	return result
+}
+
+// ProtocolToCoreInlineCompletionList converts a protocol inline completion list to core.
+func ProtocolToCoreInlineCompletionList(list *protocol.InlineCompletionList, content string) *core.InlineCompletionList {
+	if list == nil {
+		return nil
+	}
+
+	result := &core.InlineCompletionList{
+		Items: make([]core.InlineCompletionItem, len(list.Items)),
+	}
+
+	for i, item := range list.Items {
+		result.Items[i] = ProtocolToCoreInlineCompletionItem(item, content)
+	}
+
+	return result
 }

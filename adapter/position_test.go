@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/SCKelemen/lsp/core"
-	protocol "github.com/SCKelemen/lsp/protocol_3_16"
+	protocol "github.com/SCKelemen/lsp/protocol"
 )
 
 func TestCoreToProtocolPosition(t *testing.T) {

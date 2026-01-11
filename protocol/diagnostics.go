@@ -1,9 +1,75 @@
 package protocol
 
-import (
-	"github.com/SCKelemen/lsp"
-	protocol316 "github.com/SCKelemen/lsp/protocol_3_16"
-)
+// https://microsoft.github.io/language-server-protocol/specifications/specification-3-16#textDocument_publishDiagnostics
+
+type PublishDiagnosticsClientCapabilities struct {
+	/**
+	 * Whether the clients accepts diagnostics with related information.
+	 */
+	RelatedInformation *bool `json:"relatedInformation,omitempty"`
+
+	/**
+	 * Client supports the tag property to provide meta data about a diagnostic.
+	 * Clients supporting tags have to handle unknown tags gracefully.
+	 *
+	 * @since 3.15.0
+	 */
+	TagSupport *struct {
+		/**
+		 * The tags supported by the client.
+		 */
+		ValueSet []DiagnosticTag `json:"valueSet"`
+	} `json:"tagSupport,omitempty"`
+
+	/**
+	 * Whether the client interprets the version property of the
+	 * `textDocument/publishDiagnostics` notification's parameter.
+	 *
+	 * @since 3.15.0
+	 */
+	VersionSupport *bool `json:"versionSupport,omitempty"`
+
+	/**
+	 * Client supports a codeDescription property
+	 *
+	 * @since 3.16.0
+	 */
+	CodeDescriptionSupport *bool `json:"codeDescriptionSupport,omitempty"`
+
+	/**
+	 * Whether code action supports the `data` property which is
+	 * preserved between a `textDocument/publishDiagnostics` and
+	 * `textDocument/codeAction` request.
+	 *
+	 * @since 3.16.0
+	 */
+	DataSupport *bool `json:"dataSupport,omitempty"`
+}
+
+const ServerTextDocumentPublishDiagnostics = Method("textDocument/publishDiagnostics")
+
+type PublishDiagnosticsParams struct {
+	/**
+	 * The URI for which diagnostic information is reported.
+	 */
+	URI DocumentUri `json:"uri"`
+
+	/**
+	 * Optional the version number of the document the diagnostics are published
+	 * for.
+	 *
+	 * @since 3.15.0
+	 */
+	Version *UInteger `json:"version,omitempty"`
+
+	/**
+	 * An array of diagnostic information items.
+	 */
+	Diagnostics []Diagnostic `json:"diagnostics"`
+}
+
+// LSP 3.17 Diagnostic Pull Model
+// https://microsoft.github.io/language-server-protocol/specifications/specification-3-17#textDocument_diagnostic
 
 /**
  * Client capabilities specific to diagnostic pull requests.
@@ -32,12 +98,12 @@ type DiagnosticClientCapabilities struct {
  * @since 3.17.0
  */
 type DiagnosticOptions struct {
-	protocol316.WorkDoneProgressOptions
+	WorkDoneProgressOptions
 	/**
 	 * An optional identifier under which the diagnostics are
 	 * managed by the client.
 	 */
-	Identifier *string `json:"identifier"`
+	Identifier *string `json:"identifier,omitempty"`
 
 	/**
 	 * Whether the language has inter file dependencies meaning that
@@ -59,14 +125,10 @@ type DiagnosticOptions struct {
  * @since 3.17.0
  */
 type DiagnosticRegistrationOptions struct {
-	protocol316.TextDocumentRegistrationOptions
+	TextDocumentRegistrationOptions
 	DiagnosticOptions
-	protocol316.StaticRegistrationOptions
+	StaticRegistrationOptions
 }
-
-const MethodTextDocumentDiagnostic = protocol316.Method("textDocument/diagnostic")
-
-type TextDocumentDiagnosticFunc func(context *glsp.Context, params *DocumentDiagnosticParams) (any, error)
 
 /**
  * Parameters of the document diagnostic request.
@@ -74,13 +136,13 @@ type TextDocumentDiagnosticFunc func(context *glsp.Context, params *DocumentDiag
  * @since 3.17.0
  */
 type DocumentDiagnosticParams struct {
-	protocol316.WorkDoneProgressParams
-	protocol316.PartialResultParams
+	WorkDoneProgressParams
+	PartialResultParams
 
 	/**
 	 * The text document.
 	 */
-	TextDocument protocol316.TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
 	/**
 	 * The additional identifier  provided during registration.
@@ -145,7 +207,7 @@ type FullDocumentDiagnosticReport struct {
 	/**
 	 * The actual items.
 	 */
-	Items []protocol316.Diagnostic `json:"items"`
+	Items []Diagnostic `json:"items"`
 }
 
 /**
@@ -186,7 +248,7 @@ type RelatedFullDocumentDiagnosticReport struct {
 	 *
 	 * @since 3.17.0
 	 */
-	RelatedDocuments map[protocol316.DocumentUri]interface{} `json:"relatedDocuments,omitempty"`
+	RelatedDocuments map[DocumentUri]interface{} `json:"relatedDocuments,omitempty"`
 }
 
 /**
@@ -205,7 +267,7 @@ type RelatedUnchangedDocumentDiagnosticReport struct {
 	 *
 	 * @since 3.17.0
 	 */
-	RelatedDocuments map[protocol316.DocumentUri]interface{} `json:"relatedDocuments,omitempty"`
+	RelatedDocuments map[DocumentUri]interface{} `json:"relatedDocuments,omitempty"`
 }
 
 /**
@@ -214,7 +276,7 @@ type RelatedUnchangedDocumentDiagnosticReport struct {
  * @since 3.17.0
  */
 type DocumentDiagnosticReportPartialResult struct {
-	RelatedDocuments map[protocol316.DocumentUri]interface{} `json:"relatedDocuments"`
+	RelatedDocuments map[DocumentUri]interface{} `json:"relatedDocuments"`
 }
 
 /**

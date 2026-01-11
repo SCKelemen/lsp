@@ -689,9 +689,9 @@ func TestFormattingOptions(t *testing.T) {
 ```go
 import (
     "github.com/SCKelemen/lsp"
-    "github.com/SCKelemen/lsp/adapter_3_16"
+    "github.com/SCKelemen/lsp/adapter"
     "github.com/SCKelemen/lsp/core"
-    protocol "github.com/SCKelemen/lsp/protocol_3_16"
+    protocol "github.com/SCKelemen/lsp/protocol"
 )
 
 type MyServer struct {
@@ -735,7 +735,7 @@ func (s *MyServer) TextDocumentFormatting(
     var protocolEdits []protocol.TextEdit
     for _, edit := range coreEdits {
         protocolEdits = append(protocolEdits, protocol.TextEdit{
-            Range:   adapter_3_16.CoreToProtocolRange(edit.Range, content),
+            Range:   adapter.CoreToProtocolRange(edit.Range, content),
             NewText: edit.NewText,
         })
     }
@@ -755,7 +755,7 @@ func (s *MyServer) TextDocumentRangeFormatting(
     }
 
     // Convert range and options
-    coreRange := adapter_3_16.ProtocolToCoreRange(params.Range, content)
+    coreRange := adapter.ProtocolToCoreRange(params.Range, content)
     coreOptions := core.FormattingOptions{
         TabSize:                int(params.Options.TabSize),
         InsertSpaces:           params.Options.InsertSpaces,
@@ -771,7 +771,7 @@ func (s *MyServer) TextDocumentRangeFormatting(
     var protocolEdits []protocol.TextEdit
     for _, edit := range coreEdits {
         protocolEdits = append(protocolEdits, protocol.TextEdit{
-            Range:   adapter_3_16.CoreToProtocolRange(edit.Range, content),
+            Range:   adapter.CoreToProtocolRange(edit.Range, content),
             NewText: edit.NewText,
         })
     }

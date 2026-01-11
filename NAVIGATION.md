@@ -791,9 +791,9 @@ func main() {
 ```go
 import (
     "github.com/SCKelemen/lsp"
-    "github.com/SCKelemen/lsp/adapter_3_16"
+    "github.com/SCKelemen/lsp/adapter"
     "github.com/SCKelemen/lsp/core"
-    protocol "github.com/SCKelemen/lsp/protocol_3_16"
+    protocol "github.com/SCKelemen/lsp/protocol"
 )
 
 type MyServer struct {
@@ -822,7 +822,7 @@ func (s *MyServer) TextDocumentDefinition(
     }
 
     // Convert protocol position to core position
-    corePos := adapter_3_16.ProtocolToCorePosition(params.Position, content)
+    corePos := adapter.ProtocolToCorePosition(params.Position, content)
 
     // Get definitions
     coreLocations := s.definition.ProvideDefinition(uri, content, corePos)
@@ -839,7 +839,7 @@ func (s *MyServer) TextDocumentDefinition(
 
         protocolLocations = append(protocolLocations, protocol.Location{
             URI:   protocol.DocumentURI(loc.URI),
-            Range: adapter_3_16.CoreToProtocolRange(loc.Range, targetContent),
+            Range: adapter.CoreToProtocolRange(loc.Range, targetContent),
         })
     }
 
@@ -858,7 +858,7 @@ func (s *MyServer) TextDocumentHover(
     }
 
     // Convert protocol position to core position
-    corePos := adapter_3_16.ProtocolToCorePosition(params.Position, content)
+    corePos := adapter.ProtocolToCorePosition(params.Position, content)
 
     // Get hover info
     hover := s.hover.ProvideHover(uri, content, corePos)
@@ -875,7 +875,7 @@ func (s *MyServer) TextDocumentHover(
     }
 
     if hover.Range != nil {
-        r := adapter_3_16.CoreToProtocolRange(*hover.Range, content)
+        r := adapter.CoreToProtocolRange(*hover.Range, content)
         result.Range = &r
     }
 

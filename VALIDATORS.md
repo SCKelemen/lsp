@@ -423,10 +423,10 @@ package main
 import (
     "context"
     "github.com/SCKelemen/lsp/core"
-    "github.com/SCKelemen/lsp/adapter_3_16"
-    protocol "github.com/SCKelemen/lsp/protocol_3_16"
+    "github.com/SCKelemen/lsp/adapter"
+    protocol "github.com/SCKelemen/lsp/protocol"
     "github.com/tliron/glsp"
-    protocol_server "github.com/tliron/glsp/protocol_3_16"
+    protocol_server "github.com/tliron/glsp/protocol"
     "github.com/tliron/glsp/server"
 )
 
@@ -472,7 +472,7 @@ func (s *MyServer) TextDocumentDidOpen(
     coreDiagnostics := s.diagnosticReg.ProvideDiagnostics(uri, content)
 
     // Convert to protocol (UTF-16)
-    protocolDiagnostics := adapter_3_16.CoreToProtocolDiagnostics(coreDiagnostics, content)
+    protocolDiagnostics := adapter.CoreToProtocolDiagnostics(coreDiagnostics, content)
 
     // Publish diagnostics to client
     ctx.Notify(protocol_server.ServerTextDocumentPublishDiagnostics, protocol.PublishDiagnosticsParams{
@@ -508,7 +508,7 @@ func (s *MyServer) TextDocumentDidChange(
         } else {
             // Incremental update
             // Convert protocol range (UTF-16) to core range (UTF-8)
-            coreRange := adapter_3_16.ProtocolToCoreRange(*change.Range, doc.Content)
+            coreRange := adapter.ProtocolToCoreRange(*change.Range, doc.Content)
 
             // Apply edit
             doc.ApplyEdit(coreRange, change.Text)
@@ -520,7 +520,7 @@ func (s *MyServer) TextDocumentDidChange(
     coreDiagnostics := s.diagnosticReg.ProvideDiagnostics(uri, doc.Content)
 
     // Convert and publish
-    protocolDiagnostics := adapter_3_16.CoreToProtocolDiagnostics(coreDiagnostics, doc.Content)
+    protocolDiagnostics := adapter.CoreToProtocolDiagnostics(coreDiagnostics, doc.Content)
 
     ctx.Notify(protocol_server.ServerTextDocumentPublishDiagnostics, protocol.PublishDiagnosticsParams{
         URI:         params.TextDocument.URI,
@@ -548,7 +548,7 @@ func (s *MyServer) TextDocumentCodeAction(
     }
 
     // Convert protocol diagnostics to core
-    coreDiagnostics := adapter_3_16.ProtocolToCoreDiagnostics(params.Context.Diagnostics, doc.Content)
+    coreDiagnostics := adapter.ProtocolToCoreDiagnostics(params.Context.Diagnostics, doc.Content)
 
     // Get code fixes using core types
     coreCtx := core.CodeFixContext{
@@ -561,7 +561,7 @@ func (s *MyServer) TextDocumentCodeAction(
     // Convert code actions to protocol
     var protocolActions []protocol.CodeAction
     for _, coreFix := range coreFixes {
-        protocolAction := adapter_3_16.CoreToProtocolCodeAction(coreFix, doc.Content)
+        protocolAction := adapter.CoreToProtocolCodeAction(coreFix, doc.Content)
         protocolActions = append(protocolActions, protocolAction)
     }
 

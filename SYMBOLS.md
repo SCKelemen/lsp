@@ -844,9 +844,9 @@ func (u *User) String() string {
 ```go
 import (
     "github.com/SCKelemen/lsp"
-    "github.com/SCKelemen/lsp/adapter_3_16"
+    "github.com/SCKelemen/lsp/adapter"
     "github.com/SCKelemen/lsp/core"
-    protocol "github.com/SCKelemen/lsp/protocol_3_16"
+    protocol "github.com/SCKelemen/lsp/protocol"
 )
 
 type MyServer struct {
@@ -894,8 +894,8 @@ func (s *MyServer) coreToProtocolSymbol(
         Detail:         symbol.Detail,
         Kind:           protocol.SymbolKind(symbol.Kind),
         Deprecated:     symbol.Deprecated,
-        Range:          adapter_3_16.CoreToProtocolRange(symbol.Range, content),
-        SelectionRange: adapter_3_16.CoreToProtocolRange(symbol.SelectionRange, content),
+        Range:          adapter.CoreToProtocolRange(symbol.Range, content),
+        SelectionRange: adapter.CoreToProtocolRange(symbol.SelectionRange, content),
     }
 
     if len(symbol.Tags) > 0 {

@@ -40,6 +40,13 @@ const (
 	 * A log message.
 	 */
 	MessageTypeLog = MessageType(4)
+
+	/**
+	 * A debug message.
+	 *
+	 * @since 3.18.0
+	 */
+	MessageTypeDebug = MessageType(5)
 )
 
 // https://microsoft.github.io/language-server-protocol/specifications/specification-3-16#window_showMessageRequest

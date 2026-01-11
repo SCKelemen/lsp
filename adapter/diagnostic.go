@@ -2,7 +2,7 @@ package adapter_3_16
 
 import (
 	"github.com/SCKelemen/lsp/core"
-	protocol "github.com/SCKelemen/lsp/protocol_3_16"
+	protocol "github.com/SCKelemen/lsp/protocol"
 )
 
 // CoreToProtocolDiagnosticSeverity converts a core diagnostic severity to protocol severity.
