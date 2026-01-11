@@ -195,8 +195,8 @@ Protocol-agnostic types using UTF-8:
 - **document.go**: DocumentManager for managing documents in memory
 - **encoding.go**: UTF-8 ↔ UTF-16 conversion utilities
 
-### `adapter/` and `adapter_3_17/`
-Convert between core (UTF-8) and protocol (UTF-16) types
+### `adapter/`
+Convert between core (UTF-8) and protocol (UTF-16) types, supporting LSP 3.16, 3.17, and 3.18 features
 
 ### `examples/`
 Complete working examples for CLI tools and LSP servers
@@ -305,10 +305,13 @@ func setTrace(context *glsp.Context, params *protocol.SetTraceParams) error {
 
 ```bash
 # Run all tests
-go test ./core/... ./adapter/... ./adapter_3_17/...
+go test ./core/... ./adapter/... ./examples/...
 
 # Test specific package
 go test ./core/... -v
+
+# Run adapter tests
+go test ./adapter/... -v
 
 # Build examples
 go build ./examples/...

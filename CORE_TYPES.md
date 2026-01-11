@@ -40,12 +40,13 @@ Protocol-agnostic types using UTF-8 byte offsets:
 - **Diagnostic**: Error/warning with range, severity, code, etc. ([LSP Spec](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/#diagnostic))
 - **DocumentManager**: Utility for managing documents in memory
 
-### `adapter/` and `adapter_3_17/`
+### `adapter/`
 Convert between core types (UTF-8) and protocol types (UTF-16):
 - Position conversions (UTF-8 ↔ UTF-16 code units)
 - Range conversions
 - Diagnostic conversions
 - Batch conversion helpers
+- Full support for LSP 3.16, 3.17, and 3.18 features
 
 **Important:** The LSP specification requires UTF-16 code units for character offsets, not UTF-8 bytes.
 Our adapters handle this conversion automatically at API boundaries.
