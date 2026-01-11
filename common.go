@@ -1,4 +1,4 @@
-package glsp
+package lsp
 
 import (
 	contextpkg "context"

@@ -71,7 +71,7 @@ import (
 )
 
 func (s *Server) TextDocumentDidOpen(
-    context *glsp.Context,
+    context *lsp.Context,
     params *protocol.DidOpenTextDocumentParams,
 ) error {
     uri := string(params.TextDocument.URI)
@@ -265,7 +265,7 @@ func main() {
 	server.RunStdio()
 }
 
-func initialize(context *glsp.Context, params *protocol.InitializeParams) (any, error) {
+func initialize(context *lsp.Context, params *protocol.InitializeParams) (any, error) {
 	capabilities := handler.CreateServerCapabilities()
 	return protocol.InitializeResult{
 		Capabilities: capabilities,
@@ -276,16 +276,16 @@ func initialize(context *glsp.Context, params *protocol.InitializeParams) (any, 
 	}, nil
 }
 
-func initialized(context *glsp.Context, params *protocol.InitializedParams) error {
+func initialized(context *lsp.Context, params *protocol.InitializedParams) error {
 	return nil
 }
 
-func shutdown(context *glsp.Context) error {
+func shutdown(context *lsp.Context) error {
 	protocol.SetTraceValue(protocol.TraceValueOff)
 	return nil
 }
 
-func setTrace(context *glsp.Context, params *protocol.SetTraceParams) error {
+func setTrace(context *lsp.Context, params *protocol.SetTraceParams) error {
 	protocol.SetTraceValue(params.Value)
 	return nil
 }
