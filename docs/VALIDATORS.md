@@ -689,4 +689,4 @@ Not every diagnostic needs a code fix. Only provide fixes when:
 For more details, see:
 - [CORE_TYPES.md](CORE_TYPES.md) - Core types architecture
 - [LSP_CAPABILITIES.md](LSP_CAPABILITIES.md) - Supported LSP features
-- [README.md](README.md) - Quick start guide
+- [README.md](../README.md) - Quick start guide

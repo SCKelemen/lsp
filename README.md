@@ -10,57 +10,7 @@ A Go library for implementing Language Server Protocol (LSP) servers with protoc
 - **Automatic UTF-16 Conversion**: Adapters handle protocol conversion at boundaries per LSP spec requirements
 - **Full LSP Support**: Implements LSP 3.16, 3.17, and 3.18
 
-## LSP Primer: Editor Features → LSP Capabilities
-
-If you're familiar with VS Code but new to LSP servers, here's how editor features map to LSP capabilities:
-
-### Code Intelligence
-
-| You Know This As... | LSP Feature | What It Does |
-|---------------------|-------------|--------------|
-| Red/yellow squiggles under code | **Diagnostics** (`textDocument/publishDiagnostics`) | Show errors, warnings, and hints |
-| Lightbulb with quick fixes | **Code Actions** (`textDocument/codeAction`) | Provide quick fixes and refactorings |
-| Auto-complete dropdown | **Completion** (`textDocument/completion`) | Suggest code completions |
-| Gray ghost text suggestions | **Inline Completions** (`textDocument/inlineCompletion`) | AI-powered inline code suggestions |
-| Parameter hints `(paramName: ...)` | **Signature Help** (`textDocument/signatureHelp`) | Show function parameters while typing |
-| Type hints `x: number` | **Inlay Hints** (`textDocument/inlayHint`) | Show inferred types and parameter names |
-
-### Navigation
-
-| You Know This As... | LSP Feature | What It Does |
-|---------------------|-------------|--------------|
-| Ctrl+Click / F12 to jump to definition | **Go to Definition** (`textDocument/definition`) | Jump to where something is defined |
-| Find all references | **References** (`textDocument/references`) | Find all uses of a symbol |
-| Hover tooltip with docs | **Hover** (`textDocument/hover`) | Show documentation on hover |
-| Breadcrumbs / outline view | **Document Symbols** (`textDocument/documentSymbol`) | Show file structure |
-| File symbol search (Ctrl+Shift+O) | **Document Symbols** | Quick navigation within file |
-| Workspace symbol search (Ctrl+T) | **Workspace Symbols** (`workspace/symbol`) | Search symbols across workspace |
-
-### Editing
-
-| You Know This As... | LSP Feature | What It Does |
-|---------------------|-------------|--------------|
-| Format Document | **Formatting** (`textDocument/formatting`) | Auto-format code |
-| Format Selection | **Range Formatting** (`textDocument/rangeFormatting`) | Format selected code |
-| Rename Symbol (F2) | **Rename** (`textDocument/rename`) | Rename across all files |
-| Fold/unfold code regions | **Folding Range** (`textDocument/foldingRange`) | Define collapsible regions |
-| Color picker on `#FF0000` | **Document Color** (`textDocument/documentColor`) | Show color decorators |
-
-### Advanced Features
-
-| You Know This As... | LSP Feature | What It Does |
-|---------------------|-------------|--------------|
-| Syntax highlighting (semantic) | **Semantic Tokens** (`textDocument/semanticTokens`) | Enhanced syntax coloring |
-| Code lenses (clickable hints above code) | **Code Lens** (`textDocument/codeLens`) | Inline actionable commands |
-| Smart selection expansion | **Selection Range** (`textDocument/selectionRange`) | Expand/shrink selection intelligently |
-
-**Not sure what to implement?** Start with:
-1. **Diagnostics** - Show errors and warnings
-2. **Completion** - Basic auto-complete
-3. **Hover** - Show documentation
-4. **Go to Definition** - Jump to definitions
-
-These four features provide 80% of the value with 20% of the effort.
+**New to LSP?** Check out the **[LSP Primer](docs/LSP_PRIMER.md)** - a guide mapping VS Code features (like squiggles, auto-complete, and go-to-definition) to LSP capabilities.
 
 ## Quick Start
 
@@ -145,13 +95,13 @@ Complete guides for implementing LSP features from scratch to production:
 
 ### Core Features
 
-➡️ **[VALIDATORS.md](VALIDATORS.md)** - Diagnostic Providers
+➡️ **[VALIDATORS.md](docs/VALIDATORS.md)** - Diagnostic Providers
 - Writing validators that detect code issues
 - Testing with Unicode content
 - Composing multiple validators
 - Integration with LSP servers
 
-➡️ **[CODE_ACTIONS.md](CODE_ACTIONS.md)** - Code Action Providers
+➡️ **[CODE_ACTIONS.md](docs/CODE_ACTIONS.md)** - Code Action Providers
 - Quick fixes for diagnostics
 - Refactoring actions (extract, inline, rewrite)
 - Source actions (organize imports, fix all)
@@ -159,13 +109,13 @@ Complete guides for implementing LSP features from scratch to production:
 
 ### Navigation & Information
 
-➡️ **[NAVIGATION.md](NAVIGATION.md)** - Definition & Hover Providers
+➡️ **[NAVIGATION.md](docs/NAVIGATION.md)** - Definition & Hover Providers
 - Go-to-definition across files
 - Hover information with markdown
 - Finding references and implementations
 - Type definitions and declarations
 
-➡️ **[SYMBOLS.md](SYMBOLS.md)** - Document Symbol Providers
+➡️ **[SYMBOLS.md](docs/SYMBOLS.md)** - Document Symbol Providers
 - Hierarchical document structure
 - Outline and breadcrumb navigation
 - Symbol kinds (functions, classes, variables)
@@ -173,13 +123,13 @@ Complete guides for implementing LSP features from scratch to production:
 
 ### Editor Features
 
-➡️ **[FOLDING.md](FOLDING.md)** - Folding Range Providers
+➡️ **[FOLDING.md](docs/FOLDING.md)** - Folding Range Providers
 - Collapsible code regions
 - Multiple folding strategies (braces, indentation, regions)
 - Comments, imports, and function folding
 - Language-agnostic folding patterns
 
-➡️ **[FORMATTING.md](FORMATTING.md)** - Formatting Providers
+➡️ **[FORMATTING.md](docs/FORMATTING.md)** - Formatting Providers
 - Document-wide formatting
 - Range formatting for selections
 - Formatting options (tabs, spaces, whitespace)
@@ -197,7 +147,8 @@ Complete guides for implementing LSP features from scratch to production:
 ```
 ┌─────────────────────────────────────┐
 │      Your Business Logic            │
-│   (core types, UTF-8 offsets)       │
+│       (core/ package)                │
+│   UTF-8 offsets, Go-friendly types  │
 └────────────┬────────────────────────┘
              │
              ├─ CLI Tools: Direct use
@@ -205,13 +156,15 @@ Complete guides for implementing LSP features from scratch to production:
              └─ LSP Server: Convert at boundaries
                       ↓
           ┌───────────────────────┐
-          │   Adapter Packages    │
-          │   (UTF-8 ↔ UTF-16)   │
+          │   Adapter Functions   │
+          │    (adapter/ package) │
+          │    UTF-8 ↔ UTF-16     │
           └───────────────────────┘
                       ↓
           ┌───────────────────────┐
           │   Protocol Types      │
-          │   (JSON-RPC/LSP)      │
+          │   (protocol/ package) │
+          │   JSON-RPC/LSP Spec   │
           └───────────────────────┘
 ```
 
@@ -239,8 +192,17 @@ Protocol-agnostic types using UTF-8:
 - **document.go**: DocumentManager for managing documents in memory
 - **encoding.go**: UTF-8 ↔ UTF-16 conversion utilities
 
+### `protocol/`
+LSP protocol types with UTF-16 offsets (JSON-RPC):
+- Full LSP 3.16, 3.17, and 3.18 protocol type definitions
+- Message types, request/response structures
+- Server and client capabilities
+
 ### `adapter/`
-Convert between core (UTF-8) and protocol (UTF-16) types, supporting LSP 3.16, 3.17, and 3.18 features
+Conversion functions between core (UTF-8) and protocol (UTF-16) types:
+- Position and range conversions
+- Diagnostic, completion, and workspace edit conversions
+- Support for all LSP 3.16, 3.17, and 3.18 features
 
 ### `examples/`
 Complete working examples for CLI tools and LSP servers
@@ -332,16 +294,16 @@ func setTrace(context *glsp.Context, params *protocol.SetTraceParams) error {
 ## Documentation
 
 ### Feature Implementation Guides
-- **[VALIDATORS.md](VALIDATORS.md)** - Diagnostic providers and validators
-- **[CODE_ACTIONS.md](CODE_ACTIONS.md)** - Quick fixes, refactorings, and source actions
-- **[NAVIGATION.md](NAVIGATION.md)** - Go-to-definition and hover information
-- **[SYMBOLS.md](SYMBOLS.md)** - Document symbols and outline
-- **[FOLDING.md](FOLDING.md)** - Folding ranges for code regions
-- **[FORMATTING.md](FORMATTING.md)** - Document and range formatting
+- **[VALIDATORS.md](docs/VALIDATORS.md)** - Diagnostic providers and validators
+- **[CODE_ACTIONS.md](docs/CODE_ACTIONS.md)** - Quick fixes, refactorings, and source actions
+- **[NAVIGATION.md](docs/NAVIGATION.md)** - Go-to-definition and hover information
+- **[SYMBOLS.md](docs/SYMBOLS.md)** - Document symbols and outline
+- **[FOLDING.md](docs/FOLDING.md)** - Folding ranges for code regions
+- **[FORMATTING.md](docs/FORMATTING.md)** - Document and range formatting
 
 ### Architecture & Reference
-- **[CORE_TYPES.md](CORE_TYPES.md)** - Core types architecture and UTF-8/UTF-16 conversion
-- **[LSP_CAPABILITIES.md](LSP_CAPABILITIES.md)** - All LSP capabilities with support status
+- **[CORE_TYPES.md](docs/CORE_TYPES.md)** - Core types architecture and UTF-8/UTF-16 conversion
+- **[LSP_CAPABILITIES.md](docs/LSP_CAPABILITIES.md)** - All LSP capabilities with support status
 - **[examples/](examples/)** - Complete working examples with tests
 - **[core/](core/)** - Core type definitions and utilities
 
