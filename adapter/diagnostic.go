@@ -5,6 +5,10 @@ import (
 	protocol "github.com/SCKelemen/lsp/protocol"
 )
 
+// ContentResolver returns document content for a URI when converting ranges.
+// The boolean indicates whether content was found for the URI.
+type ContentResolver func(uri string) (string, bool)
+
 // CoreToProtocolDiagnosticSeverity converts a core diagnostic severity to protocol severity.
 func CoreToProtocolDiagnosticSeverity(severity core.DiagnosticSeverity) protocol.DiagnosticSeverity {
 	return protocol.DiagnosticSeverity(severity)
@@ -28,6 +32,13 @@ func ProtocolToCoreDiagnosticTag(tag protocol.DiagnosticTag) core.DiagnosticTag 
 // CoreToProtocolDiagnostic converts a core.Diagnostic (UTF-8) to a protocol Diagnostic (UTF-16).
 // The content parameter is the document content needed for UTF-8/UTF-16 conversion.
 func CoreToProtocolDiagnostic(diag core.Diagnostic, content string) protocol.Diagnostic {
+	return CoreToProtocolDiagnosticWithResolver(diag, content, nil)
+}
+
+// CoreToProtocolDiagnosticWithResolver converts a core.Diagnostic (UTF-8) to a protocol Diagnostic (UTF-16).
+// The content parameter is used for the main diagnostic range.
+// If resolver is provided, it is used to map related information ranges in their own files.
+func CoreToProtocolDiagnosticWithResolver(diag core.Diagnostic, content string, resolver ContentResolver) protocol.Diagnostic {
 	result := protocol.Diagnostic{
 		Range:   CoreToProtocolRange(diag.Range, content),
 		Message: diag.Message,
@@ -76,10 +87,15 @@ func CoreToProtocolDiagnostic(diag core.Diagnostic, content string) protocol.Dia
 	if len(diag.RelatedInformation) > 0 {
 		relatedInfo := make([]protocol.DiagnosticRelatedInformation, len(diag.RelatedInformation))
 		for i, info := range diag.RelatedInformation {
-			// Note: We use the same content for related information locations.
-			// In practice, related information might reference other files, so this is simplified.
+			relatedContent := content
+			if resolver != nil {
+				if resolvedContent, ok := resolver(info.Location.URI); ok {
+					relatedContent = resolvedContent
+				}
+			}
+
 			relatedInfo[i] = protocol.DiagnosticRelatedInformation{
-				Location: CoreToProtocolLocation(info.Location, content),
+				Location: CoreToProtocolLocation(info.Location, relatedContent),
 				Message:  info.Message,
 			}
 		}
@@ -92,6 +108,13 @@ func CoreToProtocolDiagnostic(diag core.Diagnostic, content string) protocol.Dia
 // ProtocolToCoreDiagnostic converts a protocol Diagnostic (UTF-16) to a core.Diagnostic (UTF-8).
 // The content parameter is the document content needed for UTF-16/UTF-8 conversion.
 func ProtocolToCoreDiagnostic(diag protocol.Diagnostic, content string) core.Diagnostic {
+	return ProtocolToCoreDiagnosticWithResolver(diag, content, nil)
+}
+
+// ProtocolToCoreDiagnosticWithResolver converts a protocol Diagnostic (UTF-16) to a core.Diagnostic (UTF-8).
+// The content parameter is used for the main diagnostic range.
+// If resolver is provided, it is used to map related information ranges in their own files.
+func ProtocolToCoreDiagnosticWithResolver(diag protocol.Diagnostic, content string, resolver ContentResolver) core.Diagnostic {
 	result := core.Diagnostic{
 		Range:   ProtocolToCoreRange(diag.Range, content),
 		Message: diag.Message,
@@ -112,6 +135,8 @@ func ProtocolToCoreDiagnostic(diag protocol.Diagnostic, content string) core.Dia
 	// Convert code
 	if diag.Code != nil && diag.Code.Value != nil {
 		switch code := diag.Code.Value.(type) {
+		case protocol.Integer:
+			result.Code = &core.DiagnosticCode{IsInt: true, IntValue: int(code)}
 		case int:
 			result.Code = &core.DiagnosticCode{IsInt: true, IntValue: code}
 		case string:
@@ -139,8 +164,15 @@ func ProtocolToCoreDiagnostic(diag protocol.Diagnostic, content string) core.Dia
 	if len(diag.RelatedInformation) > 0 {
 		relatedInfo := make([]core.DiagnosticRelatedInformation, len(diag.RelatedInformation))
 		for i, info := range diag.RelatedInformation {
+			relatedContent := content
+			if resolver != nil {
+				if resolvedContent, ok := resolver(string(info.Location.URI)); ok {
+					relatedContent = resolvedContent
+				}
+			}
+
 			relatedInfo[i] = core.DiagnosticRelatedInformation{
-				Location: ProtocolToCoreLocation(info.Location, content),
+				Location: ProtocolToCoreLocation(info.Location, relatedContent),
 				Message:  info.Message,
 			}
 		}
@@ -153,18 +185,30 @@ func ProtocolToCoreDiagnostic(diag protocol.Diagnostic, content string) core.Dia
 // CoreToProtocolDiagnostics converts a slice of core diagnostics to protocol diagnostics.
 // This is a convenience function for the common case of converting diagnostic arrays.
 func CoreToProtocolDiagnostics(diags []core.Diagnostic, content string) []protocol.Diagnostic {
+	return CoreToProtocolDiagnosticsWithResolver(diags, content, nil)
+}
+
+// CoreToProtocolDiagnosticsWithResolver converts a slice of core diagnostics to protocol diagnostics.
+// The resolver is used for related information locations in other files.
+func CoreToProtocolDiagnosticsWithResolver(diags []core.Diagnostic, content string, resolver ContentResolver) []protocol.Diagnostic {
 	result := make([]protocol.Diagnostic, len(diags))
 	for i, diag := range diags {
-		result[i] = CoreToProtocolDiagnostic(diag, content)
+		result[i] = CoreToProtocolDiagnosticWithResolver(diag, content, resolver)
 	}
 	return result
 }
 
 // ProtocolToCoreDiagnostics converts a slice of protocol diagnostics to core diagnostics.
 func ProtocolToCoreDiagnostics(diags []protocol.Diagnostic, content string) []core.Diagnostic {
+	return ProtocolToCoreDiagnosticsWithResolver(diags, content, nil)
+}
+
+// ProtocolToCoreDiagnosticsWithResolver converts a slice of protocol diagnostics to core diagnostics.
+// The resolver is used for related information locations in other files.
+func ProtocolToCoreDiagnosticsWithResolver(diags []protocol.Diagnostic, content string, resolver ContentResolver) []core.Diagnostic {
 	result := make([]core.Diagnostic, len(diags))
 	for i, diag := range diags {
-		result[i] = ProtocolToCoreDiagnostic(diag, content)
+		result[i] = ProtocolToCoreDiagnosticWithResolver(diag, content, resolver)
 	}
 	return result
 }
