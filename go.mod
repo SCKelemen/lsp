@@ -1,8 +1,9 @@
 module github.com/SCKelemen/lsp
 
-go 1.23
+go 1.25.4
 
 require (
+	github.com/SCKelemen/unicode v1.1.1
 	github.com/gorilla/websocket v1.5.3
 	github.com/pkg/errors v0.9.1
 	github.com/sourcegraph/jsonrpc2 v0.2.0
@@ -10,7 +11,6 @@ require (
 )
 
 require (
-	github.com/SCKelemen/unicode v1.0.0 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/iancoleman/strcase v0.3.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
