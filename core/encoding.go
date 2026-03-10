@@ -196,6 +196,10 @@ func ByteOffsetToPosition(content string, offset int) Position {
 // If the position is beyond the end of the document, returns len(content).
 // If the character offset is beyond the end of the line, clamps to end of line.
 func PositionToByteOffset(content string, pos Position) int {
+	if pos.Line < 0 {
+		pos.Line = 0
+	}
+
 	offset := 0
 	currentLine := 0
 
@@ -219,6 +223,9 @@ func PositionToByteOffset(content string, pos Position) int {
 	}
 
 	characterOffset := pos.Character
+	if characterOffset < 0 {
+		characterOffset = 0
+	}
 	if characterOffset > lineEnd {
 		characterOffset = lineEnd
 	}

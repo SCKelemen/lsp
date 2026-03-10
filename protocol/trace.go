@@ -1,7 +1,6 @@
 package protocol
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/SCKelemen/lsp"
@@ -24,6 +23,11 @@ func SetTraceValue(value TraceValue) {
 	if value == "messages" {
 		value = TraceValueMessage
 	}
+	switch value {
+	case TraceValueOff, TraceValueMessage, TraceValueVerbose:
+	default:
+		value = TraceValueOff
+	}
 
 	traceValue = value
 }
@@ -41,7 +45,7 @@ func HasTraceLevel(value TraceValue) bool {
 		return true
 
 	default:
-		panic(fmt.Sprintf("unsupported trace level: %s", value_))
+		return false
 	}
 }
 
@@ -54,7 +58,7 @@ func HasTraceMessageType(type_ MessageType) bool {
 		return HasTraceLevel(TraceValueVerbose)
 
 	default:
-		panic(fmt.Sprintf("unsupported message type: %d", type_))
+		return false
 	}
 }
 

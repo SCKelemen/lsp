@@ -195,6 +195,8 @@ func TestPositionToByteOffset(t *testing.T) {
 		{Position{2, 0}, 20},   // start of third line
 		{Position{2, 100}, 23}, // past end of line (clamped)
 		{Position{10, 0}, 23},  // past end of content
+		{Position{0, -5}, 0},   // negative character (clamped)
+		{Position{-2, 3}, 3},   // negative line (clamped)
 	}
 
 	for _, tt := range tests {

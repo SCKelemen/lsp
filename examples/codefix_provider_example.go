@@ -170,7 +170,7 @@ func CLIToolWithProviders() {
 	ctx := core.CodeFixContext{
 		URI:         uri,
 		Content:     content,
-		Range:       core.Range{Start: core.Position{0, 0}, End: core.Position{2, 100}},
+		Range:       core.Range{Start: core.Position{Line: 0, Character: 0}, End: core.Position{Line: 2, Character: 100}},
 		Diagnostics: diagnostics,
 	}
 	codeFixes := codeFixRegistry.ProvideCodeFixes(ctx)

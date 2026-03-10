@@ -40,12 +40,19 @@ func (d *Document) SetContent(content string) {
 // ApplyEdit applies a text edit to the document.
 // The range and replacement text use UTF-8 byte offsets.
 func (d *Document) ApplyEdit(r Range, newText string) {
+	if !r.IsValid() {
+		return
+	}
+
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
 	content := d.Content
-	start := PositionToByteOffset(content, r.Start)
-	end := PositionToByteOffset(content, r.End)
+	start := PositionToByteOffset(content, clampPosition(r.Start))
+	end := PositionToByteOffset(content, clampPosition(r.End))
+	if end < start {
+		return
+	}
 
 	d.Content = content[:start] + newText + content[end:]
 	d.Version++
@@ -92,16 +99,15 @@ func (dm *DocumentManager) Close(uri string) {
 
 // Update updates a document's content.
 func (dm *DocumentManager) Update(uri, content string) bool {
-	dm.mu.Lock()
-	defer dm.mu.Unlock()
-
+	dm.mu.RLock()
 	doc, ok := dm.documents[uri]
+	dm.mu.RUnlock()
+
 	if !ok {
 		return false
 	}
 
-	doc.Content = content
-	doc.Version++
+	doc.SetContent(content)
 	return true
 }
 
@@ -109,12 +115,12 @@ func (dm *DocumentManager) Update(uri, content string) bool {
 // Returns empty string if document not found.
 func (dm *DocumentManager) GetContent(uri string) string {
 	dm.mu.RLock()
-	defer dm.mu.RUnlock()
-
-	if doc, ok := dm.documents[uri]; ok {
-		return doc.Content
+	doc, ok := dm.documents[uri]
+	dm.mu.RUnlock()
+	if !ok {
+		return ""
 	}
-	return ""
+	return doc.GetContent()
 }
 
 // ApplyEdit applies a text edit to a document.
@@ -126,4 +132,14 @@ func (dm *DocumentManager) ApplyEdit(uri string, r Range, newText string) bool {
 
 	doc.ApplyEdit(r, newText)
 	return true
+}
+
+func clampPosition(pos Position) Position {
+	if pos.Line < 0 {
+		pos.Line = 0
+	}
+	if pos.Character < 0 {
+		pos.Character = 0
+	}
+	return pos
 }

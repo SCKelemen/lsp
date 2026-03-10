@@ -3,6 +3,8 @@
 // LSP Specification: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/#diagnostic
 package core
 
+import "strconv"
+
 // DiagnosticSeverity indicates the severity level of a diagnostic.
 //
 // LSP Specification: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/#diagnosticSeverity
@@ -106,7 +108,7 @@ func NewStringCode(code string) DiagnosticCode {
 // String returns the string representation of the code
 func (c DiagnosticCode) String() string {
 	if c.IsInt {
-		return string(rune(c.IntValue))
+		return strconv.Itoa(c.IntValue)
 	}
 	return c.StringValue
 }
@@ -116,9 +118,10 @@ func (c DiagnosticCode) String() string {
 //
 // LSP Specification: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.16/specification/#diagnostic
 // Protocol: { range: Range, severity?: DiagnosticSeverity, code?: integer | string,
-//            codeDescription?: CodeDescription, source?: string, message: string,
-//            tags?: DiagnosticTag[], relatedInformation?: DiagnosticRelatedInformation[],
-//            data?: any }
+//
+//	codeDescription?: CodeDescription, source?: string, message: string,
+//	tags?: DiagnosticTag[], relatedInformation?: DiagnosticRelatedInformation[],
+//	data?: any }
 type Diagnostic struct {
 	// Range is where the diagnostic applies
 	Range Range
